@@ -10,6 +10,42 @@ su quixote.molara.net e l'attivazione/verifica dello scheduler in produzione
 sono ancora da completare: non esiste ancora un URL del diario verificato.
 Il repository è <https://github.com/fmolara/bufrom>.
 
+## Compilazione e test su Debian
+
+Questa sezione è riservata alla **macchina di sviluppo**. Per un server che esegue
+il binario già compilato seguire la sezione
+[Installazione in produzione, senza compilazione](#installazione-in-produzione-su-debian-senza-compilazione).
+
+Dipendenze da installare come amministratore (non è necessario usare sudo se
+l'amministratore accede direttamente come root):
+
+```sh
+apt install build-essential pkg-config libwreport-dev wreport-common \
+    libsqlite3-dev libssl-dev gnuplot-nox curl jq util-linux coreutils
+```
+
+Come utente ordinario, nella directory del progetto:
+
+```sh
+make -j2
+make check
+./build/bufrom --help
+```
+
+GCC 13 o successivo con `std::format`; mantenuti Makefile e C++20. Le sole
+librerie aggiunte sono SQLite e OpenSSL (SHA-256). L'acquisizione usa Bash,
+curl e jq: la decodifica e l'interpretazione restano nel nucleo C++.
+I test di pipeline usano Python 3 per controllare HTML/CSV; `make check` è offline
+e non richiede account, rete, Apache o privilegi. Python non è usato dal servizio.
+
+La suite conserva i sette gruppi nativi e l'integrazione del prototipo, aggiunge
+la fixture MeteoHub reale di 648 byte e controlla identità fra reti, timestamp,
+livello, unità, mancanti, persistenza, duplicati, rettifiche, conflitti e rollback
+SQLite. Una prova di pipeline con input temporanei sintetici controlla anche
+fallimenti di download/gnuplot, asset versionati e ripristino della release.
+Le prove live sono separate: dettagli e versioni in
+[VALIDATION-debian.txt](VALIDATION-debian.txt).
+
 ## Installazione in produzione su Debian, senza compilazione
 
 Sul server è sufficiente installare un eseguibile già compilato e le dipendenze
@@ -94,41 +130,6 @@ e configurazione dell'unità al pacchetto installato. Per gli aggiornamenti
 successivi installare un nuovo archivio compatibile in una nuova directory e
 seguire la procedura operativa; database e raw rimangono nella stessa `STATE_DIR`.
 Questa procedura non è ancora stata verificata sul server di produzione.
-
-## Compilazione e test su Debian
-
-Questa sezione è riservata alla **macchina di sviluppo**. Per un server che esegue
-il binario già compilato usare soltanto la procedura di installazione precedente.
-
-Dipendenze da installare come amministratore (non è necessario usare sudo se
-l'amministratore accede direttamente come root):
-
-```sh
-apt install build-essential pkg-config libwreport-dev wreport-common \
-    libsqlite3-dev libssl-dev gnuplot-nox curl jq util-linux coreutils
-```
-
-Come utente ordinario, nella directory del progetto:
-
-```sh
-make -j2
-make check
-./build/bufrom --help
-```
-
-GCC 13 o successivo con `std::format`; mantenuti Makefile e C++20. Le sole
-librerie aggiunte sono SQLite e OpenSSL (SHA-256). L'acquisizione usa Bash,
-curl e jq: la decodifica e l'interpretazione restano nel nucleo C++.
-I test di pipeline usano Python 3 per controllare HTML/CSV; `make check` è offline
-e non richiede account, rete, Apache o privilegi. Python non è usato dal servizio.
-
-La suite conserva i sette gruppi nativi e l'integrazione del prototipo, aggiunge
-la fixture MeteoHub reale di 648 byte e controlla identità fra reti, timestamp,
-livello, unità, mancanti, persistenza, duplicati, rettifiche, conflitti e rollback
-SQLite. Una prova di pipeline con input temporanei sintetici controlla anche
-fallimenti di download/gnuplot, asset versionati e ripristino della release.
-Le prove live sono separate: dettagli e versioni in
-[VALIDATION-debian.txt](VALIDATION-debian.txt).
 
 ## Dal BUFR al diario
 
