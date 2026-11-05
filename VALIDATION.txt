@@ -1,0 +1,34 @@
+Diario meteo della Romagna v0.1.0 — verifica eseguita
+
+Ambiente: Ubuntu 24.04.3, x86_64, glibc 2.39.
+Compilatore: GCC 13.3, C++20; -Wall -Wextra -Wpedantic, nessun warning del progetto.
+Libreria: libwreport 3.36, pacchetti Ubuntu 3.36-1.1build1, tabelle corrispondenti.
+Grafici: gnuplot-nox 6.0.0.
+Dipendenze ufficiali estratte in prefisso locale; build tramite pkg-config.
+
+Comando di test: make check
+Esito: exit status 0.
+
+[OK] fixture reale: valori, attributi e provenienza
+[OK] roundtrip BUFR semantico
+[OK] UTC indipendente da TZ e dalla data dell'header
+[OK] CSV: valori mancanti, zero, attributi ed escaping
+[OK] altezza sconosciuta e temperatura ambigua
+[OK] input concatenato, vuoto e troncato
+[OK] fixture Romagna: Cervia e Rimini
+Tutti i test nativi sono passati.
+OK: CLI, roundtrip, CSV, gnuplot, selezione stazioni, protezione output e cleanup
+
+La prova CLI verifica decode/encode/decode sui quattro file originali:
+69 messaggi BUFR complessivi, senza differenze semantiche segnalate.
+Il test di stabilità usa la stessa libreria per codifica e decodifica;
+non è una verifica indipendente di conformità WMO.
+
+Esempio prodotto: examples/site/index.html, 2 osservazioni e 2 SVG.
+Origine: tests/data/synop3new.bufr, filtro WMO 16148 e 16149.
+Data osservativa: 2010-08-15T00:00:00Z; secondi assunti 00 con diagnostica.
+Grafici: dati reali della fixture, un punto per stazione, nessuna interpolazione.
+SVG verificati come XML; grafico verificato visivamente anche tramite rendering PNG.
+
+Non sono ancora state eseguite prove su Debian o Raspberry Pi.
+Nessuna pubblicazione Apache o acquisizione MeteoHub è stata effettuata.

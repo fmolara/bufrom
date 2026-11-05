@@ -1,0 +1,31 @@
+Fixture BUFR wreport: provenienza e risultati di decodifica verificati
+Verifica: libreria nativa wreport 3.36 dai pacchetti Ubuntu 24.04 3.36-1.1build1, headers C++ e tabelle ufficiali.
+URL immutabile per ciascun file: https://sources.debian.org/data/main/w/wreport/3.36-1.1/testdata/bufr/NOMEFILE
+Controllo aggiuntivo: i byte coincidono con https://raw.githubusercontent.com/ARPA-SIMC/wreport/master/testdata/bufr/NOMEFILE al momento della verifica.
+
+Licenza: Debian debian/copyright dichiara Files: * GPL-2+; i testdata sono distribuiti nel sorgente upstream. Nessuna licenza separata dei singoli dati osservativi trovata nel README dei testdata. Conservare LICENSE.wreport e debian-copyright.wreport insieme alle fixture distribuite.
+Fonte: https://metadata.ftp-master.debian.org/changelogs/main/w/wreport/wreport_3.36-1.1_copyright
+Fonte testo GPL: https://sources.debian.org/data/main/w/wreport/3.36-1.1/LICENSE
+Questi sono dati storici di test: non costituiscono un flusso ItaliaMeteo/MeteoHub e non vanno presentati come dati attuali.
+
+File | byte | SHA256
+obs0-1.22.bufr | 220 | 9db336696bcb9df1c160f65accef80430e50c5a8267b577fc00e7dac99e91522
+obs0-1.11188.bufr | 194 | 23b99fd4cf1a0005ba9ef7dff90c919bc734ed483c757e274943d5d859f5bffc
+obs0-3.504.bufr | 220 | d86c91e847148e3bdac4f08534219d9d6735fc66bb4c62c5774d5d8c4a0c7dc1
+synop3new.bufr | 14182 | d498b5d71bcd8c4472907b13b7947a7bc70f6e5096d94a26581b5984fa2f8ce2
+
+Valori attesi letti con BufrBulletin::read, decode, print_structured e print (dump-fixture.cpp):
+obs0-1.22.bufr: 1 messaggio, 1 subset, 52 variabili; categoria 0, subcategoria locale 1, edizione 3. WMO 60150 (B01001=60; B01002=150). B04001..B04005: 2004-11-30 12:00. B12004=289.2 K a indice 17 zero-based; temperatura esplicitamente a 2 m. Attributo B33007 della temperatura=80. Conversione K-273.15: 16.05 degC. Latitudine 33.88, longitudine -5.53, quota stazione 560 m.
+obs0-1.11188.bufr: WMO 13577 (13,577). Data osservazione 2005-12-01 18:00. B12004=281.8 K a indice 18, quindi 8.65 degC. Latitudine 41.53, longitudine 20.70, quota 1321 m.
+obs0-3.504.bufr: WMO 06720 (6,720). Data osservazione 2004-11-30 12:00. B12004=277.7 K a indice 17, quindi 4.55 degC. Latitudine 46.22, longitudine 7.33, quota 481 m.
+synop3new.bufr: 66 messaggi, ognuno con 1 subset per stazione distinta. Tutti hanno B04001..B04005=2010-08-15 00:00 e B12004 a 2 m definito; non contengono B04024..26 oppure B08021. Il timestamp dei dati e quello di header coincidono in questi campioni, ma il profilo applicativo deve leggere i descrittori nei subset.
+synop3new.bufr messaggio 0: WMO 16080, B12004=289.7 K (16.55 degC).
+synop3new.bufr messaggio 41 zero-based: WMO 16149, B12004=295.6 K (22.45 degC), latitudine 44.03, longitudine 12.62, quota 13 m.
+synop3new.bufr messaggio 62 zero-based: WMO 16148, B12004=295.0 K (21.85 degC), latitudine 44.22, longitudine 12.30, quota 10 m. Identificazione Cervia confermata da esempio documentazione ufficiale WMO wis2box: https://docs.wis2box.wis.wmo.int/en/0.3.0/running/station-metadata.html (Cervia,0-20000-0-16148).
+
+Nota precisione: B12004 in queste tabelle ha precisione 0.1 K. I centesimi .05/.15/.85 risultano dalla conversione esatta per 273.15 e non indicano precisione del sensore superiore a quella del codice.
+Nota tempo: B04006 (secondi) assente; convenzione del profilo minuto=secondi 0. La convenzione va dichiarata.
+
+Test upstream per invariant della fixture principale: https://sources.debian.org/src/wreport/3.36-1.1/wreport/bufr/decoder-test.cc ; testdata README: https://sources.debian.org/src/wreport/3.36-1.1/testdata/bufr/README
+
+Identita stazioni verificata anche nel registro ufficiale NOAA NCEI https://www.ncei.noaa.gov/pub/data/noaa/isd-history.csv (lettura HTTP riuscita da Python; web renderer non legge CSV): USAF=161480, STATION NAME=CERVIA, ICAO=LIPC; USAF=161490, STATION NAME=RIMINI MIRAMARE, ICAO=LIPR. Le coordinate e quote del registro attuale possono differire dalle coordinate storiche contenute nel BUFR; conservarle distintamente.

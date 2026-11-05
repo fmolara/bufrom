@@ -1,0 +1,3 @@
+station_id,station_name,timestamp_utc,epoch_seconds,temperature_c,sensor_height_m,variable_code,source,message_index,subset_index
+"16148","","2010-08-15T00:00:00Z",1281830400,21.849989999999991,2,"B12004","input1:synop3new.bufr",62,0
+"16149","","2010-08-15T00:00:00Z",1281830400,22.449990000000014,2,"B12004","input1:synop3new.bufr",41,0
