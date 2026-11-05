@@ -47,7 +47,9 @@ restano in file privati, mai in argomenti, repository o log.
 Per quixote si prevede un utente di sistema `wreport`, con gruppo omonimo,
 senza password e con shell `/usr/sbin/nologin`. Il servizio viene avviato dal
 timer systemd di sistema: non occorrono login SSH con questa utenza, privilegi
-amministrativi o lingering. La creazione sul server non è ancora stata verificata.
+amministrativi o lingering. Federico ha confermato su quixote la creazione
+dell’utenza, home e shell previste, e le directory private `wreport:wreport` con
+permessi `0700`. Installazione del programma e avvio del servizio restano da verificare.
 
 Per creare l'utenza e le directory private, l'amministratore esegue questi comandi
 come root su quixote, dopo aver verificato che il nome non sia già utilizzato

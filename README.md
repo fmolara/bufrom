@@ -54,18 +54,27 @@ versione Debian compatibile con il server: quello verificato in sviluppo è per
 **Debian 13 (trixie), amd64**. Per Debian 12 o altre architetture occorre preparare
 un binario adatto sulla macchina di sviluppo.
 
-Attualmente non sono pubblicati un pacchetto `.deb` o un archivio binario nelle
-Release GitHub. Gli archivi dei sorgenti non contengono l'eseguibile. Un archivio
-di esecuzione si può preparare sulla macchina di sviluppo, dopo build e test,
-includendo soltanto questi file del progetto già compilato:
+Per Debian 13 amd64 è disponibile il pacchetto binario di sviluppo nella
+[prerelease v0.2.0-dev](https://github.com/fmolara/bufrom/releases/tag/v0.2.0-dev).
+L'esecuzione in produzione è ancora da verificare. Scaricare:
+
+- `bufrom-0.2.0-dev-debian13-amd64.tar.gz`: programma, tabelle, script ed esempi;
+- `bufrom-0.2.0-dev-source.tar.gz`: sorgenti corrispondenti, con le rispettive licenze;
+- `SHA256SUMS`: checksum degli archivi.
+
+Il pacchetto contiene una directory `bufrom-0.2.0-dev-COMMIT` e un file
+`BUILD-INFO.txt` con commit, architettura e versioni delle librerie. Non è un `.deb`
+e non contiene database operativi, dati grezzi acquisiti, log o configurazioni private.
+Gli archivi automatici dei soli sorgenti di GitHub non contengono l'eseguibile.
+
+Per preparare nuovi archivi sulla macchina di sviluppo, da un checkout pulito:
 
 ```sh
-tar -czf ../bufrom-runtime-debian13-amd64.tar.gz \
-    build/bufrom tables scripts config systemd README.md OPERATIONS.md COPYING
+./scripts/package-runtime.sh ../bufrom-release
 ```
 
-Accompagnare l'archivio con il suo checksum SHA-256 e i sorgenti corrispondenti
-allo stesso commit, con le rispettive licenze. Trasferire questi file sul server.
+Lo script compila e verifica il progetto in sviluppo, quindi produce binario,
+sorgenti e checksum in una directory esterna al repository.
 Non occorrono compilatore, `make`, `pkg-config`, pacchetti `-dev`, Python o Git
 per eseguire BufRom in produzione.
 
@@ -102,7 +111,8 @@ in una directory nuova, esterna alla document root. Per esempio:
 BUFROM_DIR="$HOME/.local/opt/bufrom-0.2.0-dev"
 mkdir -p "$HOME/.local/opt"
 mkdir "$BUFROM_DIR"
-tar -xzf /percorso/bufrom-runtime-debian13-amd64.tar.gz -C "$BUFROM_DIR"
+tar -xzf /percorso/bufrom-0.2.0-dev-debian13-amd64.tar.gz \
+    --strip-components=1 -C "$BUFROM_DIR"
 "$BUFROM_DIR/build/bufrom" --version
 ldd "$BUFROM_DIR/build/bufrom"
 install -d -m 700 "$HOME/.config/bufrom"
