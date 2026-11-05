@@ -3,8 +3,11 @@
 Stato attuale: esecuzione live verificata in sviluppo e primo aggiornamento manuale
 riuscito su `quixote.molara.net`, con anteprima privata e 236 osservazioni nuove
 alle 2026-11-05T21:21:36Z (output confermato da Federico).
-URL scelto: `https://www.molara.net/bufrom/`; collegamento ad Apache ancora da
-configurare e verificare. Nessuna unità systemd è stata installata o attivata.
+Sito pubblico: `https://www.molara.net/bufrom/`, verificato dall’esterno con
+HTML, due SVG, CSV, redirect e link GitHub. La release pubblicata alle
+2026-11-05T21:36:05Z mostra 238 osservazioni delle due stazioni; la precedente
+con 236 osservazioni è ancora disponibile. La pagina iniziale del sito è invariata.
+Nessuna unità systemd è stata installata o attivata.
 Non serve lasciare una sessione SSH aperta dopo l'installazione del servizio.
 
 ## Preparare il server
@@ -82,9 +85,8 @@ I percorsi proposti negli esempi sono:
 | `/var/lib/wreport/bufrom` | `STATE_DIR`, proprietà `wreport:wreport`, modo `0700`; database, raw, ricevute e log |
 | `/var/www/bufrom` | `PUBLIC_DIR` dedicata, scrivibile da `wreport` e leggibile da Apache; solo HTML, CSV e grafici |
 
-Il percorso pubblico scelto per il collegamento Apache è `/var/www/bufrom`;
-la sua creazione e l’inclusione dell’Alias restano da eseguire.
-L’URL scelto è `https://www.molara.net/bufrom/`, ancora da collegare e verificare. Apache non deve accedere alla directory
+Il percorso pubblico `/var/www/bufrom` è collegato ad Apache e verificato
+all’URL `https://www.molara.net/bufrom/`. Apache non deve accedere alla directory
 privata e l'utente `wreport` non deve possedere o poter modificare il programma.
 
 Dopo l'installazione del pacchetto binario e della configurazione, per il primo
@@ -143,7 +145,8 @@ La prerelease originaria v0.2.0-dev non contiene ancora il frammento; è disponi
 nel repository e sarà incluso nei nuovi archivi di esecuzione.
 
 Le seguenti operazioni sono riservate all'amministratore, previa autorizzazione
-di Federico; non sono ancora state eseguite su quixote:
+di Federico. La prima pubblicazione su quixote è stata eseguita e verificata
+seguendo questa procedura:
 
 1. Creare `/var/www/bufrom` soltanto se il percorso è libero, con proprietario
    `wreport:wreport` e modo `0755`. Copiarvi con `cp -a` il contenuto di
@@ -172,7 +175,8 @@ di Federico; non sono ancora state eseguite su quixote:
 Il frammento è stato provato con Apache 2.4.69 ufficiale Debian, estratto in un
 prefisso privato e avviato senza root su loopback: sintassi, pagina, SVG, CSV,
 redirect della barra finale, divieto di listing e isolamento fra VirtualHost
-verificati. Questo controllo locale non sostituisce il test HTTPS su quixote.
+verificati. Anche il successivo controllo HTTPS su quixote è riuscito: 238 righe dati
+nel CSV, due SVG XML validi, vecchi asset raggiungibili e sito principale invariato.
 
 ## Pianificazione
 

@@ -88,3 +88,19 @@ estratto da pacchetti Debian ufficiali in un prefisso privato, senza installazio
 root e con ascolto solo su loopback. Sintassi, HTML/SVG/CSV, redirect slash,
 listing negato e altri VirtualHost preservati. Configtest e verifica HTTPS sul
 server devono ancora essere eseguiti da Federico e verificati dall'esterno.
+
+Pubblicazione HTTPS riuscita su quixote, confermata dal configtest fornito da
+Federico (Syntax OK) e da accessi HTTPS senza autenticazione eseguiti dall'agente.
+Sito: https://www.molara.net/bufrom/
+Release 20261105T213605Z-54648, aggiornamento riuscito 2026-11-05T21:36:05Z.
+CSV pubblico: 238 osservazioni, 119 per Forlì Urbana e 119 per Bertinoro;
+periodo 2026-11-04T15:30:00Z .. 2026-11-05T21:00:00Z, rete simnbo,
+K nativi, altezza 2 m, qualità dichiarata non certificata.
+Due SVG verificati come XML; CSV e SVG hanno URL con lo stesso ID di release.
+Redirect /bufrom e HTTP verso /bufrom/ HTTPS verificati. Link al repository
+pubblico verificato senza autenticazione. Nessun percorso privato esposto in HTML.
+La pagina principale https://www.molara.net/ è HTTP 200 e il contenuto HTML
+corrisponde esattamente alla copia acquisita prima della modifica Apache.
+La release precedente 20261105T212136Z-54360 conserva CSV con 236 osservazioni
+e due SVG raggiungibili via HTTPS, per un eventuale ripristino.
+Scheduler e prova di errore controllato sul server ancora da completare.

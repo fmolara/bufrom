@@ -4,11 +4,12 @@ BufRom è un piccolo programma **C++20 collegato direttamente a libwreport**.
 Acquisisce temperature in BUFR da MeteoHub, le archivia in SQLite e genera
 HTML, CSV e grafici SVG con gnuplot. Apache serve soltanto i file statici.
 
-**Stato: 0.2.0-dev, verificata su Debian 13.** Aggiornamenti live hanno prodotto
-serie reali di due stazioni della Romagna in sviluppo e nell’anteprima privata
-su quixote. La pubblicazione HTTPS
-su quixote.molara.net e l'attivazione/verifica dello scheduler in produzione
-sono ancora da completare: non esiste ancora un URL del diario verificato.
+**Sito pubblico: [BufRom — Diario meteo della Romagna](https://www.molara.net/bufrom/).**
+Versione 0.2.0-dev, verificata su Debian 13: acquisizione BUFR, archivio e
+pubblicazione manuale su quixote sono funzionanti. Pagina HTTPS, SVG, CSV e
+release precedente sono stati verificati dall’esterno. L’attivazione e la prima
+esecuzione dello scheduler, insieme alla prova di errore controllato sul server,
+restano da completare; gli aggiornamenti non sono ancora dichiarati automatici.
 Il repository è <https://github.com/fmolara/bufrom>.
 
 ## Compilazione e test su Debian
@@ -57,7 +58,7 @@ un binario adatto sulla macchina di sviluppo.
 
 Per Debian 13 amd64 è disponibile il pacchetto binario di sviluppo nella
 [prerelease v0.2.0-dev](https://github.com/fmolara/bufrom/releases/tag/v0.2.0-dev).
-L'esecuzione in produzione è ancora da verificare. Scaricare:
+L’esecuzione manuale in produzione è verificata; lo scheduler resta da verificare. Scaricare:
 
 - `bufrom-0.2.0-dev-debian13-amd64.tar.gz`: programma, tabelle, script ed esempi;
 - `bufrom-0.2.0-dev-source.tar.gz`: sorgenti corrispondenti, con le rispettive licenze;
@@ -141,7 +142,8 @@ consultare [OPERATIONS.md](OPERATIONS.md#pianificazione), adattando utente, perc
 e configurazione dell'unità al pacchetto installato. Per gli aggiornamenti
 successivi installare un nuovo archivio compatibile in una nuova directory e
 seguire la procedura operativa; database e raw rimangono nella stessa `STATE_DIR`.
-Questa procedura non è ancora stata verificata sul server di produzione.
+L’installazione binaria e il primo aggiornamento sono stati verificati su quixote;
+lo scheduler resta da attivare e verificare.
 Per il server quixote è prevista l'utenza di servizio dedicata `wreport`:
 [creazione, percorsi e permessi](OPERATIONS.md#utente-di-servizio-wreport).
 Gli esempi di configurazione e unità systemd sono predisposti per questa utenza.
@@ -307,8 +309,9 @@ Fixture MeteoHub e osservazioni: **CC BY 4.0**, attribuzioni separate in
 `tests/data/PROVENANCE.meteohub.txt`. La licenza del codice non sostituisce
 quella dei dati.
 
-Restano da verificare build, aggiornamento completo, Apache/HTTPS e prima
-esecuzione pianificata sul sistema di produzione. Il programma conserva in
+Binario, aggiornamento completo e Apache/HTTPS sono verificati in produzione.
+Restano da completare la prova di errore controllato sul server e la prima
+esecuzione pianificata. Il programma conserva in
 memoria piccoli lotti, non interpreta BUFR arbitrari e non garantisce repliche
 complete della fonte. Altre variabili, reti, autenticazione MeteoHub e nuovi
 profili sono sviluppi futuri. Non sono inclusi CREX, scrittura di nuovi bollettini,
