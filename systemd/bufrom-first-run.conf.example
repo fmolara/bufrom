@@ -1,0 +1,7 @@
+# Temporary drop-in for bufrom.timer; remove after the first successful activation.
+[Timer]
+OnCalendar=
+OnActiveSec=30s
+AccuracySec=1s
+RandomizedDelaySec=0
+Persistent=false

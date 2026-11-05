@@ -7,9 +7,9 @@ HTML, CSV e grafici SVG con gnuplot. Apache serve soltanto i file statici.
 **Sito pubblico: [BufRom — Diario meteo della Romagna](https://www.molara.net/bufrom/).**
 Versione 0.2.0-dev, verificata su Debian 13: acquisizione BUFR, archivio e
 pubblicazione manuale su quixote sono funzionanti. Pagina HTTPS, SVG, CSV e
-release precedente sono stati verificati dall’esterno. L’attivazione e la prima
-esecuzione dello scheduler, insieme alla prova di errore controllato sul server,
-restano da completare; gli aggiornamenti non sono ancora dichiarati automatici.
+release precedente sono stati verificati dall’esterno. Reimportazione idempotente e prova di download fallito con pubblicazione
+conservata sono confermate anche sul server. L’attivazione e la prima esecuzione
+dello scheduler restano da completare; gli aggiornamenti non sono ancora dichiarati automatici.
 Il repository è <https://github.com/fmolara/bufrom>.
 
 ## Compilazione e test su Debian
@@ -310,8 +310,8 @@ Fixture MeteoHub e osservazioni: **CC BY 4.0**, attribuzioni separate in
 quella dei dati.
 
 Binario, aggiornamento completo e Apache/HTTPS sono verificati in produzione.
-Restano da completare la prova di errore controllato sul server e la prima
-esecuzione pianificata. Il programma conserva in
+Reimportazione e conservazione del sito dopo un download fallito sono verificate
+anche sul server. Restano l’attivazione e la prima esecuzione pianificata. Il programma conserva in
 memoria piccoli lotti, non interpreta BUFR arbitrari e non garantisce repliche
 complete della fonte. Altre variabili, reti, autenticazione MeteoHub e nuovi
 profili sono sviluppi futuri. Non sono inclusi CREX, scrittura di nuovi bollettini,

@@ -7,6 +7,9 @@ Sito pubblico: `https://www.molara.net/bufrom/`, verificato dall’esterno con
 HTML, due SVG, CSV, redirect e link GitHub. La release pubblicata alle
 2026-11-05T21:36:05Z mostra 238 osservazioni delle due stazioni; la precedente
 con 236 osservazioni è ancora disponibile. La pagina iniziale del sito è invariata.
+La reimportazione ha riportato 472 duplicati, nessuna osservazione nuova o
+rettificata. Una prova di download fallito ha conservato esattamente HTML e
+ultimo successo, verificati con SHA-256 e con una nuova lettura HTTPS.
 Nessuna unità systemd è stata installata o attivata.
 Non serve lasciare una sessione SSH aperta dopo l'installazione del servizio.
 
@@ -199,11 +202,22 @@ saltati. Il servizio ha un timeout di 15 minuti, così come il comando manuale.
 Usare un solo scheduler: nessun cron aggiuntivo. Un timer utente richiederebbe
 anche verifica del lingering (disabilitato sulla macchina di sviluppo).
 
-Prima del rilascio verificare una vera attivazione da timer: un amministratore
-può installare temporaneamente un override del solo timer con `OnActiveSec=30s`
-e `RandomizedDelaySec=0`, riavviarlo, attendere la breve scadenza e controllare
-journal e ultimo successo. Rimuovere poi quell'override e verificare il calendario
-orario. L'avvio manuale del servizio non prova il funzionamento dello scheduler;
+Prima del rilascio verificare una vera attivazione da timer. Il file
+[systemd/bufrom-first-run.conf.example](systemd/bufrom-first-run.conf.example)
+è un override temporaneo da installare come
+`/etc/systemd/system/bufrom.timer.d/first-run.conf`: azzera `OnCalendar`, imposta
+`OnActiveSec=30s`, `AccuracySec=1s`, `RandomizedDelaySec=0` e `Persistent=false`.
+Queste opzioni sono documentate in
+[systemd.timer](https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html).
+Avviare il timer, attendere circa 35 secondi e controllare journal, risultato del
+servizio e cambiamento della release in `last-success.json`. Se l'aggiornamento
+è ancora in corso, attendere il completamento prima di considerare passata la prova.
+
+Soltanto dopo un'esecuzione riuscita rimuovere il solo file `first-run.conf`,
+fare `systemctl daemon-reload`, riavviare `bufrom.timer` e verificare il calendario
+orario con `systemctl list-timers`. Non usare `systemctl revert`, che potrebbe
+rimuovere altri override. L’unità base mantiene la frequenza oraria e il recupero
+dei turni saltati. Il servizio viene eseguito come `wreport`, dalla sua home privata. L'avvio manuale del servizio non prova il funzionamento dello scheduler;
 la sola presenza di un timer attivo non prova aggiornamenti automatici riusciti.
 
 ## Ripristino, backup e aggiornamenti

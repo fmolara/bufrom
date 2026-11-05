@@ -104,3 +104,14 @@ corrisponde esattamente alla copia acquisita prima della modifica Apache.
 La release precedente 20261105T212136Z-54360 conserva CSV con 236 osservazioni
 e due SVG raggiungibili via HTTPS, per un eventuale ripristino.
 Scheduler e prova di errore controllato sul server ancora da completare.
+
+Controlli successivi su quixote, output confermato da Federico:
+- reimportazione dei BUFR originali già archiviati: new=0, updated=0,
+  duplicate=472, excluded=0;
+- download fallito simulato con CURL=/bin/false in configurazione temporanea:
+  stage=acquisition e exit_status non zero;
+- SHA256 di index.html pubblico e last-success.json identici prima/dopo;
+- nuova lettura HTTPS dall'agente: HTML identico, SHA256
+  050a0612109357f18ffd035cec04cf33f52037ede87f79f2b69b2f7e17ea02ad.
+Preparato e verificato staticamente un override del timer con prima attivazione
+in 30 secondi e accuratezza 1 secondo. Nessun timer ancora attivato sul server.
