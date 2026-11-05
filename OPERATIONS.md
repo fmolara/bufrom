@@ -138,6 +138,32 @@ link GitHub. Un controllo locale non dimostra che Apache serva la nuova release.
 Controllare che il database, i raw e la configurazione non siano sotto il percorso
 pubblico. I log possono includere percorsi locali e restano privati.
 
+## Aggiungere stazioni
+
+La configurazione di esempio comprende Forlì Urbana, Bertinoro e le otto
+aggiunte scelte: Novafeltria, Ponte Uso, Premilcuore, Ravenna urbana, Rimini Ausa,
+Rocca San Casciano Meteo, Tredozio e Verghereto. Il collaudo live locale delle
+dieci stazioni è riuscito con dieci grafici SVG e CSV; l'applicazione della
+nuova selezione a quixote richiede la modifica di `/etc/bufrom/bufrom.conf`.
+
+Prima della modifica salvare una copia privata della configurazione, conservando
+proprietà e permessi. Aggiornare `STATIONS` con le identità riportate nel README
+e ampliare l'area di download a `LAT_MIN=43.78`, `LAT_MAX=44.43`, `LON_MIN=11.73`,
+`LON_MAX=12.56`. Conservare gli altri parametri del server. Controllare con
+`bash -n /etc/bufrom/bufrom.conf` e avviare l'aggiornamento come `wreport`, usando
+il comando manuale sopra. La selezione non richiede un nuovo binario o una
+ricarica di Apache; il timer leggerà la configurazione al prossimo avvio.
+
+L'area comprende anche stazioni non selezionate e alcuni template non supportati:
+il conteggio `excluded` può quindi essere maggiore di zero. Le osservazioni
+escluse non vengono aggiunte alle serie. Verificare dopo l'aggiornamento che
+pagina, grafici e CSV contengano le dieci stazioni richieste.
+
+Nel catalogo MeteoHub verificato non risulta una stazione denominata Cesena.
+Martorano, nel comune di Cesena, fornisce temperature BUFR ma appartiene alla
+rete `locali`, non supportata dalla pipeline operativa attuale. Per scelta di
+Federico questa stazione resta fuori dall'estensione.
+
 ## Pubblicazione Apache su quixote
 
 URL scelto: `https://www.molara.net/bufrom/`, output in `/var/www/bufrom`.

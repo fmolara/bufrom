@@ -144,3 +144,28 @@ controlli TLS: HTML della release 20261105T215033Z-55077, aggiornamento
 Release precedente 20261105T213605Z-54648 ancora raggiungibile; pagina iniziale
 identica alla copia acquisita prima delle modifiche. Primo avvio automatico
 accelerato verificato; i successivi turni orari non sono ancora stati osservati.
+
+Estensione della configurazione a dieci stazioni simnbo, 2026-11-05:
+Forlì Urbana e Bertinoro conservate; aggiunte selezionate da Federico:
+Novafeltria, Ponte Uso, Premilcuore, Ravenna urbana, Rimini Ausa,
+Rocca San Casciano Meteo, Tredozio, Verghereto.
+Identità rete/coordinate e quote ricavate con libwreport dai BUFR reali.
+Area di download: lat 43.78 .. 44.43, lon 11.73 .. 12.56.
+Pipeline live locale, configurazione e archivio separati dalla produzione:
+success_utc=2026-11-05T22:50:03Z, new=1112, updated=0, duplicate=0, excluded=702.
+Gli esclusi comprendono le altre stazioni nell'area e i template non supportati.
+Verificati i dieci nomi nella pagina, dieci SVG XML validi e 1112 righe CSV;
+archivio con esattamente le dieci stazioni scelte. Intervallo delle misure:
+2026-11-04T17:00:00Z .. 2026-11-05T22:00:00Z. Ponte Uso ha 59 misure,
+le altre stazioni 117 ciascuna; nessuna interpolazione aggiunta.
+Applicazione della nuova configurazione e verifica HTTPS su quixote da completare.
+Procedura di sostituzione della selezione verificata su una copia della vecchia
+configurazione: dieci identità e nuova area corretti, PUBLIC_DIR e DISPLAY_HOURS
+personalizzati conservati. Controlli bash -n, shellcheck e git diff --check riusciti.
+
+Controllo Cesena: nel catalogo corrente /api/observations?onlyStations=true
+non risulta una stazione con questo nome. Verificati separatamente BUFR per
+Martorano (locali:44.16562,12.26806), nel comune di Cesena: 91 misure del
+2026-11-05, ultima 22:30:00Z, 18 descrittori. La rete locali non è supportata
+dalla pipeline attuale e Federico ha scelto di mantenere soltanto le aggiunte
+simnbo. Nessuna estensione del codice C++ o aggiornamento del binario.

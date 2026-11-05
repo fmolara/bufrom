@@ -186,10 +186,22 @@ Rete/dataset `simnbo` (`simnbo-emiliaromagna` nel catalogo), attribuzione
 Licenza e attribuzione verificate nell'API ufficiale
 [`datasets?licenceSpecs=true`](https://meteohub.agenziaitaliameteo.it/api/datasets?licenceSpecs=true).
 
+La configurazione di esempio comprende le seguenti dieci stazioni, verificate
+su BUFR reali. La verifica iniziale in produzione riguardava Forlì Urbana e
+Bertinoro; per aggiungere le altre al server occorre aggiornare la configurazione.
+
 | Nome fornito dalla fonte | Identità della stazione (rete e coordinate) | Quota suolo |
 | --- | --- | --- |
 | Forlì Urbana | `simnbo:44.22039,12.04182` | 51 m |
 | Bertinoro | `simnbo:44.15206,12.14217` | 139 m |
+| Novafeltria | `simnbo:43.90111,12.28611` | 331 m |
+| Ponte Uso | `simnbo:43.97765,12.30275` | 161 m |
+| Premilcuore | `simnbo:43.98494,11.78709` | 427 m |
+| Ravenna urbana | `simnbo:44.41500,12.20003` | 27 m |
+| Rimini Ausa | `simnbo:44.05651,12.54549` | 10 m |
+| Rocca San Casciano Meteo | `simnbo:44.05597,11.84312` | 250 m |
+| Tredozio | `simnbo:44.08200,11.74533` | 330 m |
+| Verghereto | `simnbo:43.79417,12.00472` | 805 m |
 
 Il flusso non fornisce un codice stazione numerico separato: si conserva il nome
 B01019; l'identità stabile segue le stazioni fisse DB-All.e (rete e coordinate).
@@ -209,7 +221,7 @@ Il profilo operativo è deliberatamente stretto:
   il valore nativo, senza arrotondamenti nell'archivio; la tabella mostra due decimali.
 - Template/contesti diversi sono esclusi con origine e motivo nei log. Non si
   appiattiscono descrittori ripetuti in una mappa. I template a 17 descrittori
-  incontrati su altre reti non fanno parte di questo profilo.
+  incontrati anche su alcune stazioni simnbo non fanno parte di questo profilo.
 
 Le tabelle di `wreport-common` da sole non contengono queste definizioni locali.
 In [tables/](tables/PROVENANCE.txt) sono incluse le tabelle ufficiali DB-All.e
@@ -265,8 +277,11 @@ interpretabili blocca l'aggiornamento e conserva il sito precedente.
 Copiare [config/bufrom.conf.example](config/bufrom.conf.example) in un percorso
 privato esterno al repository e alla document root, adattare i percorsi e dare
 permessi `0600`. Non occorre un account MeteoHub per questo profilo pubblico.
-`STATIONS` seleziona le due identità reali, `OVERLAP_HOURS` la finestra riletta,
-`DISPLAY_HOURS` le ultime ore mostrate (48 per impostazione iniziale).
+`STATIONS` seleziona le identità reali da archiviare e mostrare, `OVERLAP_HOURS`
+la finestra riletta, `DISPLAY_HOURS` le ultime ore mostrate (48 per impostazione iniziale).
+L'elenco non ha un limite di due stazioni. Aggiungere una stazione simnbo con il
+profilo supportato non richiede ricompilazione; ampliare anche `LAT_MIN`, `LAT_MAX`,
+`LON_MIN` e `LON_MAX` se le sue coordinate sono fuori dall'area di acquisizione.
 
 ```sh
 ./scripts/update.sh /percorso/privato/bufrom.conf

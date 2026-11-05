@@ -6,11 +6,24 @@ STATE_DIR=/var/lib/wreport/bufrom
 PUBLIC_DIR=/var/www/bufrom
 REPOSITORY_URL=https://github.com/fmolara/bufrom
 NETWORK=simnbo
-STATIONS=('simnbo:44.22039,12.04182' 'simnbo:44.15206,12.14217')
-LAT_MIN=44.12
-LAT_MAX=44.28
-LON_MIN=12.00
-LON_MAX=12.40
+# Identità ricavate dai BUFR della fonte; aggiungere altre righe per altre stazioni.
+STATIONS=(
+    'simnbo:44.22039,12.04182' # Forlì Urbana
+    'simnbo:44.15206,12.14217' # Bertinoro
+    'simnbo:43.90111,12.28611' # Novafeltria
+    'simnbo:43.97765,12.30275' # Ponte Uso
+    'simnbo:43.98494,11.78709' # Premilcuore
+    'simnbo:44.41500,12.20003' # Ravenna urbana
+    'simnbo:44.05651,12.54549' # Rimini Ausa
+    'simnbo:44.05597,11.84312' # Rocca San Casciano Meteo
+    'simnbo:44.08200,11.74533' # Tredozio
+    'simnbo:43.79417,12.00472' # Verghereto
+)
+# L'area di acquisizione deve comprendere tutte le coordinate in STATIONS.
+LAT_MIN=43.78
+LAT_MAX=44.43
+LON_MIN=11.73
+LON_MAX=12.56
 OVERLAP_HOURS=30
 DISPLAY_HOURS=48
 GNUPLOT=gnuplot
