@@ -1,22 +1,21 @@
 # Gestione di BufRom
 
-Stato attuale: esecuzione live verificata in sviluppo e primo aggiornamento manuale
-riuscito su `quixote.molara.net`, con anteprima privata e 236 osservazioni nuove
-alle 2026-11-05T21:21:36Z (output confermato da Federico).
-Sito pubblico: `https://www.molara.net/bufrom/`, verificato dall’esterno con
-HTML, due SVG, CSV, redirect e link GitHub. La release pubblicata alle
-2026-11-05T21:36:05Z mostra 238 osservazioni delle due stazioni; la precedente
-con 236 osservazioni è ancora disponibile. La pagina iniziale del sito è invariata.
-La reimportazione ha riportato 472 duplicati, nessuna osservazione nuova o
-rettificata. Una prova di download fallito ha conservato esattamente HTML e
-ultimo successo, verificati con SHA-256 e con una nuova lettura HTTPS.
-Timer di sistema installato e prima esecuzione automatica accelerata riuscita
-alle 2026-11-05T21:50:33Z: Result=success, ExecMainStatus=0. Override di prova
-rimosso; calendario orario attivo, prossimo turno mostrato alle 23:03 CET
-(22:03 UTC). I successivi turni orari restano da osservare.
-Il VirtualHost HTTPS è ora configurato con `molara-net.conf`, indipendente
-da WordPress. Il ripristino è stato verificato dall’esterno sulla release generata
-dal timer: pagina, due SVG, CSV e redirect corretti; pagina iniziale invariata.
+Stato attuale: dieci stazioni simnbo attive su `quixote.molara.net`, con
+aggiornamento manuale riuscito alle 2026-11-05T22:56:13Z (output di Federico).
+Release `20261105T225612Z-73379`: new=891, updated=0, duplicate=230, excluded=708.
+Sito pubblico: `https://www.molara.net/bufrom/`, verificato dall'esterno con
+pagina HTTPS, dieci SVG XML validi, CSV con 1133 osservazioni e link GitHub.
+Le due stazioni iniziali conservano le misure già archiviate; le otto aggiunte
+mostrano le misure dalla finestra di acquisizione sovrapposta di 30 ore.
+
+La precedente reimportazione ha riportato 472 duplicati, nessuna osservazione
+nuova o rettificata. Una prova di download fallito ha conservato esattamente HTML
+e ultimo successo, verificati con SHA-256 e con una nuova lettura HTTPS.
+Timer di sistema installato e primo avvio automatico accelerato riuscito alle
+2026-11-05T21:50:33Z: Result=success, ExecMainStatus=0. Override di prova rimosso;
+calendario ordinario orario attivo. L'estensione a dieci stazioni è stata
+verificata con avvio manuale; non è ancora verificato il suo successivo turno orario.
+Il VirtualHost HTTPS è configurato con `molara-net.conf`, indipendente da WordPress.
 Non serve lasciare una sessione SSH aperta dopo l'installazione del servizio.
 
 ## Preparare il server
@@ -143,8 +142,8 @@ pubblico. I log possono includere percorsi locali e restano privati.
 La configurazione di esempio comprende Forlì Urbana, Bertinoro e le otto
 aggiunte scelte: Novafeltria, Ponte Uso, Premilcuore, Ravenna urbana, Rimini Ausa,
 Rocca San Casciano Meteo, Tredozio e Verghereto. Il collaudo live locale delle
-dieci stazioni è riuscito con dieci grafici SVG e CSV; l'applicazione della
-nuova selezione a quixote richiede la modifica di `/etc/bufrom/bufrom.conf`.
+dieci stazioni è riuscito con dieci grafici SVG e CSV. Federico ha applicato la
+nuova selezione a quixote; la pubblicazione è stata verificata anche via HTTPS.
 
 Prima della modifica salvare una copia privata della configurazione, conservando
 proprietà e permessi. Aggiornare `STATIONS` con le identità riportate nel README

@@ -187,8 +187,8 @@ Licenza e attribuzione verificate nell'API ufficiale
 [`datasets?licenceSpecs=true`](https://meteohub.agenziaitaliameteo.it/api/datasets?licenceSpecs=true).
 
 La configurazione di esempio comprende le seguenti dieci stazioni, verificate
-su BUFR reali. La verifica iniziale in produzione riguardava Forlì Urbana e
-Bertinoro; per aggiungere le altre al server occorre aggiornare la configurazione.
+su BUFR reali e attive sul sito pubblico. L'estensione su quixote è stata
+verificata via HTTPS il 5 novembre 2026: dieci grafici e CSV con 1133 osservazioni.
 
 | Nome fornito dalla fonte | Identità della stazione (rete e coordinate) | Quota suolo |
 | --- | --- | --- |

@@ -189,8 +189,8 @@ The license and attribution were checked through the official API:
 [`datasets?licenceSpecs=true`](https://meteohub.agenziaitaliameteo.it/api/datasets?licenceSpecs=true).
 
 The example configuration includes the following ten stations, checked against
-real BUFR data. The initial production validation covered Forlì Urbana and
-Bertinoro; adding the others to the server requires a configuration update.
+real BUFR data and active on the public website. The expansion on quixote was
+verified over HTTPS on 5 November 2026: ten charts and a CSV with 1133 observations.
 
 | Source-provided name | Station identity (network and coordinates) | Ground elevation |
 | --- | --- | --- |

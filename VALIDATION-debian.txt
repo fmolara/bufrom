@@ -169,3 +169,22 @@ Martorano (locali:44.16562,12.26806), nel comune di Cesena: 91 misure del
 2026-11-05, ultima 22:30:00Z, 18 descrittori. La rete locali non è supportata
 dalla pipeline attuale e Federico ha scelto di mantenere soltanto le aggiunte
 simnbo. Nessuna estensione del codice C++ o aggiornamento del binario.
+
+Estensione applicata su quixote, output confermato da Federico:
+attempt_utc=2026-11-05T22:56:12Z, ended_utc=2026-11-05T22:56:13Z,
+stage=success, exit_status=0. Ultimo successo 2026-11-05T22:56:13Z,
+release=20261105T225612Z-73379, previous_release=20261105T220316Z-55288,
+new=891, updated=0, duplicate=230, excluded=708.
+Verifica pubblica HTTPS dall'agente riuscita: pagina HTTP 200 con i dieci nomi,
+dieci SVG XML validi HTTP 200, CSV HTTP 200 con esattamente le dieci identità
+selezionate della rete simnbo e link al repository. Tutti gli asset appartengono
+alla release 20261105T225612Z-73379. Il timestamp HTML è 2026-11-05T22:56:12Z,
+generato prima della conclusione della pubblicazione alle 22:56:13Z.
+CSV: 1133 osservazioni, 124 ciascuna per Forlì Urbana e Bertinoro,
+59 per Ponte Uso e 118 ciascuna per le altre sette stazioni.
+Intervallo complessivo 2026-11-04T15:30:00Z .. 2026-11-05T22:15:00Z;
+le otto aggiunte iniziano il 2026-11-04T17:00:00Z; ultima misura di Ponte Uso
+2026-11-05T22:00:00Z, delle altre nove 22:15:00Z.
+SHA256 HTML pubblico: 67b966c6afc78fdde6bf70d73a26156773400380caabafcfa7c37311185f81a9.
+L'aggiornamento manuale a dieci stazioni è confermato; il successivo turno orario
+con la nuova selezione non è ancora stato osservato.
