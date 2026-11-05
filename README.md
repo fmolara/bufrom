@@ -8,9 +8,14 @@ HTML, CSV e grafici SVG con gnuplot. Apache serve soltanto i file statici.
 Versione 0.2.0-dev, verificata su Debian 13: acquisizione BUFR, archivio e
 pubblicazione manuale su quixote sono funzionanti. Pagina HTTPS, SVG, CSV e
 release precedente sono stati verificati dall’esterno. Reimportazione idempotente e prova di download fallito con pubblicazione
-conservata sono confermate anche sul server. L’attivazione e la prima esecuzione
-dello scheduler restano da completare; gli aggiornamenti non sono ancora dichiarati automatici.
+conservata sono confermate anche sul server. Il timer systemd è attivo: un primo aggiornamento automatico è riuscito
+con prova accelerata; la frequenza ordinaria è oraria. I cicli orari successivi
+restano da osservare.
 Il repository è <https://github.com/fmolara/bufrom>.
+
+Verifica in corso: il VirtualHost HTTPS del dominio è risultato disabilitato dopo
+la prima pubblicazione. È preparata una configurazione indipendente da WordPress
+per ripristinare HTTPS; il ripristino sul server resta da eseguire.
 
 ## Compilazione e test su Debian
 
@@ -58,7 +63,7 @@ un binario adatto sulla macchina di sviluppo.
 
 Per Debian 13 amd64 è disponibile il pacchetto binario di sviluppo nella
 [prerelease v0.2.0-dev](https://github.com/fmolara/bufrom/releases/tag/v0.2.0-dev).
-L’esecuzione manuale in produzione è verificata; lo scheduler resta da verificare. Scaricare:
+Esecuzione manuale e primo avvio automatico accelerato sono verificati in produzione. Scaricare:
 
 - `bufrom-0.2.0-dev-debian13-amd64.tar.gz`: programma, tabelle, script ed esempi;
 - `bufrom-0.2.0-dev-source.tar.gz`: sorgenti corrispondenti, con le rispettive licenze;
@@ -143,7 +148,7 @@ e configurazione dell'unità al pacchetto installato. Per gli aggiornamenti
 successivi installare un nuovo archivio compatibile in una nuova directory e
 seguire la procedura operativa; database e raw rimangono nella stessa `STATE_DIR`.
 L’installazione binaria e il primo aggiornamento sono stati verificati su quixote;
-lo scheduler resta da attivare e verificare.
+il timer è stato attivato e la prima esecuzione automatica accelerata è riuscita.
 Per il server quixote è prevista l'utenza di servizio dedicata `wreport`:
 [creazione, percorsi e permessi](OPERATIONS.md#utente-di-servizio-wreport).
 Gli esempi di configurazione e unità systemd sono predisposti per questa utenza.
@@ -278,7 +283,9 @@ copia per il ripristino **alla radice** del sito, non un ingresso da aprire dent
 Atomicità del cambio HTML non equivale a durabilità dopo perdita di alimentazione.
 
 [OPERATIONS.md](OPERATIONS.md) descrive scheduler, permessi, log, backup e ripristino.
-I file systemd sono esempi: non è stato installato o attivato alcun timer sul server.
+Gli esempi systemd corrispondono al timer installato su quixote; la prima
+attivazione automatica accelerata è verificata, i successivi turni orari restano
+da osservare.
 
 ## Comandi del nucleo
 
@@ -311,7 +318,8 @@ quella dei dati.
 
 Binario, aggiornamento completo e Apache/HTTPS sono verificati in produzione.
 Reimportazione e conservazione del sito dopo un download fallito sono verificate
-anche sul server. Restano l’attivazione e la prima esecuzione pianificata. Il programma conserva in
+anche sul server. Il primo avvio automatico accelerato è verificato; i successivi turni orari
+restano da osservare. Il programma conserva in
 memoria piccoli lotti, non interpreta BUFR arbitrari e non garantisce repliche
 complete della fonte. Altre variabili, reti, autenticazione MeteoHub e nuovi
 profili sono sviluppi futuri. Non sono inclusi CREX, scrittura di nuovi bollettini,

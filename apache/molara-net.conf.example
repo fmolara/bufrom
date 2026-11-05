@@ -1,0 +1,21 @@
+# Standalone molara.net site; does not require the WordPress package.
+<VirtualHost *:80>
+    ServerName www.molara.net
+    ServerAlias molara.net
+    Redirect permanent / https://www.molara.net/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName www.molara.net
+    ServerAlias molara.net imap.molara.net smtp.molara.net
+    DocumentRoot /var/www/html
+
+    SSLEngine on
+    Include /etc/apache2/bufrom-https.conf
+
+    ErrorLog ${APACHE_LOG_DIR}/www-molara-net-error.log
+    CustomLog ${APACHE_LOG_DIR}/www-molara-net-access.log combined
+    Include /etc/letsencrypt/options-ssl-apache.conf
+    SSLCertificateFile /etc/letsencrypt/live/molara.net/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/molara.net/privkey.pem
+</VirtualHost>

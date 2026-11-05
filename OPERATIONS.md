@@ -10,7 +10,12 @@ con 236 osservazioni è ancora disponibile. La pagina iniziale del sito è invar
 La reimportazione ha riportato 472 duplicati, nessuna osservazione nuova o
 rettificata. Una prova di download fallito ha conservato esattamente HTML e
 ultimo successo, verificati con SHA-256 e con una nuova lettura HTTPS.
-Nessuna unità systemd è stata installata o attivata.
+Timer di sistema installato e prima esecuzione automatica accelerata riuscita
+alle 2026-11-05T21:50:33Z: Result=success, ExecMainStatus=0. Override di prova
+rimosso; calendario orario attivo, prossimo turno mostrato alle 23:03 CET
+(22:03 UTC). I successivi turni orari restano da osservare.
+Nella verifica successiva il VirtualHost HTTPS del dominio è risultato disabilitato;
+il ripristino è in preparazione con la configurazione indipendente descritta sotto.
 Non serve lasciare una sessione SSH aperta dopo l'installazione del servizio.
 
 ## Preparare il server
@@ -59,7 +64,7 @@ dell’utenza, home e shell previste, e le directory private `wreport:wreport` c
 permessi `0700`. Il binario della prerelease v0.2.0-dev è stato installato sotto
 `/opt/bufrom/current`, avviato come `wreport` e verificato con `ldd`. Il primo
 aggiornamento completo ha generato l’anteprima in `/var/lib/wreport/site-preview`.
-L’avvio del servizio tramite scheduler resta da verificare.
+Il primo avvio automatico del servizio tramite timer è verificato (prova accelerata).
 
 Per creare l'utenza e le directory private, l'amministratore esegue questi comandi
 come root su quixote, dopo aver verificato che il nome non sia già utilizzato
@@ -181,13 +186,43 @@ redirect della barra finale, divieto di listing e isolamento fra VirtualHost
 verificati. Anche il successivo controllo HTTPS su quixote è riuscito: 238 righe dati
 nel CSV, due SVG XML validi, vecchi asset raggiungibili e sito principale invariato.
 
+## Ripristino del VirtualHost HTTPS del dominio
+
+Dopo il primo aggiornamento automatico riuscito, la verifica HTTPS ha trovato
+soltanto `000-default.conf` abilitato sulla porta 80. Il sito
+`wp-molara-net.conf` non era più presente in `sites-enabled`: Apache continuava
+ad ascoltare sulla porta 443 senza il VirtualHost TLS del dominio. Il problema
+è stato riprodotto sia dall’esterno sia con curl verso `127.0.0.1` sul server.
+
+La configurazione [apache/molara-net.conf.example](apache/molara-net.conf.example)
+ricrea il VirtualHost del dominio indipendentemente da WordPress. Mantiene:
+
+- redirect HTTP → HTTPS verso www.molara.net;
+- ServerName e ServerAlias già forniti da Federico;
+- DocumentRoot `/var/www/html`, equivalente a quello prima ereditato;
+- gli stessi file di certificato, opzioni TLS e log;
+- l’inclusione del frammento `/etc/apache2/bufrom-https.conf` già installato.
+
+L’amministratore deve installarla come
+`/etc/apache2/sites-available/molara-net.conf` soltanto se il nome non è già usato,
+abilitarla con `a2ensite molara-net.conf`, eseguire `apache2ctl configtest` e
+ricaricare Apache soltanto con esito positivo. In caso di test fallito,
+disabilitare soltanto il nuovo sito. Il file WordPress eventualmente rimasto
+in `sites-available` e il sito predefinito non vengono modificati.
+
+Il nuovo VirtualHost è stato verificato con Apache locale senza root, usando
+un certificato effimero di test: handshake TLS con verifica del certificato e
+del nome, pagina iniziale, `/bufrom/` e redirect HTTP corretti. I certificati reali
+restano sul server. Ripristino e successiva verifica HTTPS pubblica sono ancora
+in attesa dell’esecuzione dei comandi da parte di Federico.
+
 ## Pianificazione
 
 Preferenza iniziale: **timer systemd di sistema**. Adattare il file
 `systemd/bufrom.service.example` indicando utente e percorsi reali, installarlo
 come `bufrom.service` insieme a `systemd/bufrom.timer` nelle unità di sistema.
-Queste operazioni richiedono root e l'autorizzazione di Federico; nessun comando
-seguente è stato eseguito sul server:
+Queste operazioni richiedono root e l’autorizzazione di Federico. Su quixote
+il servizio e il timer sono stati installati, verificati e attivati da Federico:
 
 ```sh
 systemd-analyze verify /etc/systemd/system/bufrom.service /etc/systemd/system/bufrom.timer
