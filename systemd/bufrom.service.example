@@ -1,0 +1,14 @@
+[Unit]
+Description=Acquisizione e pubblicazione BufRom
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# Adattare utente e percorsi alla produzione prima dell'installazione.
+User=federico
+UMask=0077
+ExecStart=/percorso/bufrom/scripts/update.sh /percorso/privato/bufrom.conf
+TimeoutStartSec=15min
+NoNewPrivileges=true
+PrivateTmp=true

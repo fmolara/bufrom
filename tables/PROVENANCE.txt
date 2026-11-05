@@ -1,0 +1,24 @@
+Tabelle BUFR ufficiali DB-All.e, distribuite senza modifiche.
+Origine: pacchetto Debian dballe-common 7.21-1 (architecture all)
+https://archive.debian.org/debian/pool/main/d/dballe/dballe-common_7.21-1_all.deb
+SHA256 .deb: 2507d47690a76087cc47a7d283154084bf77ed218cef3a37b4cc9fd70fe8b57b
+Percorsi originali: /usr/share/wreport/{B,D}0000000000200014001.txt
+B SHA256: 7548acb91e2294e60592a83491cd31d7cfd95d11a79f038b32d086410a08d9cb
+D SHA256: 44d95374c7aea637891bd4511e7a5f3cc49c6eb7ed1c3f5c9320e18b4b5af134
+Copyright ARPA-SIM, licenza GPL versione 2: COPYRIGHT.dballe e ../COPYING.
+Il pacchetto non è installato nel sistema: sono estratti soltanto i dati.
+
+Servono le definizioni locali del centro 200, master versione 14, locale 1.
+La tabella WMO di wreport-common 3.36 non contiene B07192. Senza questi file,
+wreport sceglie una tabella WMO che non può decodificare il campione MeteoHub.
+Non è una correzione al decoder di wreport. Le tabelle congelate corrispondono
+al profilo acquisito e verificato; non si afferma che siano le tabelle più recenti.
+
+La semantica del contesto è documentata nel sorgente primario DB-All.e 7.21:
+https://archive.debian.org/debian/pool/main/d/dballe/dballe_7.21.orig.tar.gz
+SHA256: 1173dd278bf6756d8a982e0cf86e2911785fe2892dc0cde2206c8f8aaa408726
+File: dballe/msg/wr_importers/generic.cc (lettura sequenziale dei contesti),
+doc/fapi_concepts.md (identità stazioni fisse) e doc/fapi_tranges.md (tempo 254).
+Guida API: https://arpa-simc.github.io/dballe/general_ref/tranges.html
+La selezione B12101, livello 103,2000, tempo 254,0,0 è verificata anche nel
+frontend ufficiale della mappa MeteoHub (temperatura a 2 m) al 5 novembre 2026.

@@ -1,5 +1,8 @@
 /build/
 /site/
-*.o
-*.d
-
+/private/
+*.sqlite*
+*.log
+.env
+.env.*
+!*.example

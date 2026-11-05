@@ -1,0 +1,15 @@
+# File Bash fidato. Copiare FUORI dal repository e dalla document root, chmod 600.
+PROGRAM=/mnt/bufrom/bufrom/build/bufrom
+STATE_DIR=/home/federico/.local/state/bufrom
+PUBLIC_DIR=/home/federico/public/bufrom
+REPOSITORY_URL=https://github.com/fmolara/bufrom
+NETWORK=simnbo
+STATIONS=('simnbo:44.22039,12.04182' 'simnbo:44.15206,12.14217')
+LAT_MIN=44.12
+LAT_MAX=44.28
+LON_MIN=12.00
+LON_MAX=12.40
+OVERLAP_HOURS=30
+DISPLAY_HOURS=48
+GNUPLOT=gnuplot
+CURL=curl

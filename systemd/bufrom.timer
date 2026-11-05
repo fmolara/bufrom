@@ -1,0 +1,11 @@
+[Unit]
+Description=Aggiornamento orario BufRom
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=5min
+Persistent=true
+Unit=bufrom.service
+
+[Install]
+WantedBy=timers.target

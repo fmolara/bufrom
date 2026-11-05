@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <cmath>
+#include <chrono>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -27,7 +28,7 @@ namespace diario {
 namespace {
 
 namespace fs = std::filesystem;
-using Key = std::tuple<std::string, std::string, std::optional<double>>;
+using Key = std::tuple<std::string, std::string, std::string, std::string, std::optional<double>, std::string, int>;
 using Points = std::vector<const Observation*>;
 
 std::string html(const std::string& value)
@@ -136,12 +137,19 @@ void plot(const fs::path& directory, const std::string& basename,
 {
 	auto data = output(directory / (basename + ".dat"));
 	data << "# unix_seconds_utc temperature_c\n" << std::setprecision(17);
-	for (const auto* obs : points) data << obs->epoch_seconds << ' ' << obs->temperature_c << '\n';
+	Points defined;
+	for (const auto* obs : points) {
+		data << obs->epoch_seconds << ' ';
+		if (obs->temperature_set) { data << obs->temperature_c; defined.push_back(obs); }
+		else data << "NaN";
+		data << '\n';
+	}
+	if (defined.empty()) return;
 	data.close();
 	double first = static_cast<double>(points.front()->epoch_seconds);
 	double last = static_cast<double>(points.back()->epoch_seconds);
 	const double padding = first == last ? 1800 : std::max(60.0, (last - first) / 20);
-	const auto extremes = std::minmax_element(points.begin(), points.end(),
+	const auto extremes = std::minmax_element(defined.begin(), defined.end(),
 		[](const Observation* a, const Observation* b) { return a->temperature_c < b->temperature_c; });
 	const double low = (*extremes.first)->temperature_c;
 	const double high = (*extremes.second)->temperature_c;
@@ -168,7 +176,7 @@ void plot(const fs::path& directory, const std::string& basename,
 
 void render_diary(const std::vector<Observation>& observations,
 	const std::vector<std::string>& warnings, const fs::path& output_dir,
-	const std::string& gnuplot_executable)
+	const std::string& gnuplot_executable, const RenderOptions& options)
 {
 	if (output_dir.empty()) throw std::runtime_error("Specificare una directory di output nuova");
 	const auto target = fs::absolute(output_dir).lexically_normal();
@@ -180,7 +188,11 @@ void render_diary(const std::vector<Observation>& observations,
 		if (!std::isfinite(obs.temperature_c)
 			|| (obs.sensor_height_m && !std::isfinite(*obs.sensor_height_m)))
 			throw std::runtime_error("Osservazione con temperatura o altezza non finita");
-		series[{obs.station_id, obs.variable_code, obs.sensor_height_m}].push_back(&obs);
+		const auto identity=obs.station_key.empty()?obs.network+":"+obs.station_id:obs.station_key;
+		const auto level=obs.sensor_height_m?obs.level_context:
+			obs.level_context+":"+obs.source+":"+std::to_string(obs.message_index)+":"+std::to_string(obs.subset_index);
+		series[{identity, obs.variable_code, obs.profile, level+":"+obs.time_context,
+			obs.sensor_height_m, obs.native_unit, obs.native_scale}].push_back(&obs);
 		ordered.push_back(&obs);
 	}
 	const auto by_time = [](const Observation* a, const Observation* b) {
@@ -197,20 +209,26 @@ void render_diary(const std::vector<Observation>& observations,
 	if (!created) throw std::runtime_error(std::string("Creazione dello staging: ") + std::strerror(errno));
 	Staging staging{created};
 	auto values = output(staging.path / "observations.csv");
-	values << "station_id,station_name,timestamp_utc,epoch_seconds,temperature_c,sensor_height_m,variable_code,source,message_index,subset_index\n"
+	values << "station_id,station_name,timestamp_utc,epoch_seconds,temperature_c,sensor_height_m,variable_code,source,message_index,subset_index,network,station_key,native_value,native_unit,native_scale,level_context,time_context,quality\n"
 		<< std::setprecision(17);
 	for (const auto* obs : ordered) {
 		values << csv(obs->station_id) << ',' << csv(obs->station_name) << ',' << csv(obs->timestamp)
-			<< ',' << obs->epoch_seconds << ',' << obs->temperature_c << ',';
+			<< ',' << obs->epoch_seconds << ',';
+		if (obs->temperature_set) values << obs->temperature_c;
+		values << ',';
 		if (obs->sensor_height_m) values << *obs->sensor_height_m;
 		values << ',' << csv(obs->variable_code) << ',' << csv(source_name(*obs))
-			<< ',' << obs->message_index << ',' << obs->subset_index << '\n';
+			<< ',' << obs->message_index << ',' << obs->subset_index << ',' << csv(obs->network)
+			<< ',' << csv(obs->station_key) << ',';
+		if (obs->native_value) values << *obs->native_value;
+		values << ',' << csv(obs->native_unit) << ',' << obs->native_scale << ',' << csv(obs->level_context)
+			<< ',' << csv(obs->time_context) << ',' << csv(obs->quality) << '\n';
 	}
 	values.close();
 	auto page = output(staging.path / "index.html");
 	page << R"HTML(<!doctype html>
 <html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diario meteo — prototipo</title>
+<title>BufRom — Diario meteo della Romagna</title>
 <style>
 :root{color-scheme:light;font-family:system-ui,sans-serif;color:#18323e;background:#eef3f5}
 body{margin:0}header{background:#123a4a;color:#fff;padding:2.5rem max(1.25rem,calc((100vw - 1100px)/2))}
@@ -222,40 +240,59 @@ a{color:#075d78}a:focus-visible{outline:3px solid #b86712;outline-offset:3px}
 .summary{display:flex;flex-wrap:wrap;gap:1.2rem 2rem}.summary div{min-width:7rem}dt{font-size:.85rem;color:#48616c}dd{margin:.2rem 0;font-weight:650}
 .scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{text-align:left;padding:.6rem;border-bottom:1px solid #d9e4e8;white-space:nowrap}
 th{background:#eef3f5}caption{text-align:left;padding:.5rem 0}.notice{border-left:4px solid #b86712}li{margin:.5rem 0}footer{padding:1rem 0;color:#48616c}
-</style></head><body><header><p>Osservazioni meteorologiche</p><h1>Diario meteo — prototipo</h1>
-<p>Questa pagina mostra i dati importati dai file forniti. Le date riportate sono quelle delle osservazioni; i dati possono essere storici.</p></header><main>
+</style></head><body><header><p>Osservazioni meteorologiche</p><h1>BufRom — Diario meteo della Romagna</h1>
+<p>Temperature osservate in Romagna. File statici generati da BUFR con libwreport; tutte le date sono in UTC.</p></header><main>
 )HTML";
+	if (options.operational) {
+		page << "<section class=\"card\"><p>Ultimo aggiornamento riuscito del diario: <strong>"
+			<< html(options.generated_utc) << "</strong> (UTC). Le date delle misure sono riportate separatamente.</p>"
+			<< "<p>Fonte: <a href=\"https://meteohub.agenziaitaliameteo.it/\">MeteoHub — Agenzia ItaliaMeteo</a>. "
+			<< "Rete simnbo, Arpae Emilia-Romagna Idro-Meteo-Clima Service, "
+			<< "<a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a>. "
+			<< "<a href=\"" << html(options.repository) << "\">Codice sorgente BufRom</a>.</p>"
+			<< "<p>Qualità: nessuna certificazione applicata. I flag eventualmente presenti sono conservati nel CSV e dichiarati non interpretati. "
+			<< "I mancanti restano vuoti nel CSV. I grafici mostrano solo punti, senza interpolazione né linee sui buchi.</p></section>";
+	} else page << "<section class=\"card notice\"><strong>Esempio / importazione manuale: può contenere osservazioni storiche. Non è il diario operativo.</strong></section>";
 	page << "<section class=\"card\"><h2>Contenuto del diario</h2><dl class=\"summary\"><div><dt>Osservazioni</dt><dd>"
 		<< observations.size() << "</dd></div><div><dt>Serie distinte</dt><dd>" << series.size() << "</dd></div>";
 	if (!ordered.empty()) page << "<div><dt>Prima osservazione UTC</dt><dd>" << html(ordered.front()->timestamp)
 		<< "</dd></div><div><dt>Ultima osservazione UTC</dt><dd>" << html(ordered.back()->timestamp) << "</dd></div>";
-	page << "</dl><p><a href=\"observations.csv\" download>Scarica tutte le osservazioni in CSV</a></p></section>\n";
+	page << "</dl><p><a href=\"" << html(options.asset_prefix) << "observations.csv\" download>Scarica tutte le osservazioni in CSV</a></p></section>\n";
 	if (observations.empty()) page << "<section class=\"card notice\"><h2>Nessuna osservazione compatibile</h2><p>I file non hanno prodotto temperature utilizzabili con il profilo di estrazione del prototipo. Consultare la diagnostica.</p></section>\n";
 	std::size_t index = 0;
 	for (const auto& [key, points] : series) {
 		const auto basename = "temperature-" + std::to_string(++index);
-		plot(staging.path, basename, points, gnuplot_executable);
+		const bool has_values=std::any_of(points.begin(),points.end(),[](const auto* o){return o->temperature_set;});
+		if (has_values) plot(staging.path, basename, points, gnuplot_executable);
 		const auto& first = *points.front();
 		const auto label = first.station_name.empty() ? first.station_id : first.station_name;
 		page << "<section class=\"card\"><h2>" << html(label) << "</h2><p class=\"meta\">Stazione "
-			<< html(first.station_id) << " · Descrittore " << html(first.variable_code) << " · " << html(height(first.sensor_height_m))
-			<< "</p><figure><img src=\"" << basename << ".svg\" width=\"1000\" height=\"360\" alt=\"Grafico delle temperature di "
+			<< html(first.station_id) << " · Rete " << html(first.network) << " · Descrittore " << html(first.variable_code) << " · " << html(height(first.sensor_height_m))
+			<< " · " << html(options.operational ? "temperatura istantanea" : first.time_context)
+			<< " · Risoluzione nativa: " << number(std::pow(10.0,-first.native_scale),first.native_scale) << " " << html(first.native_unit)
+			<< "</p><p class=\"meta\">Identità della fonte (rete e coordinate): " << html(first.station_key)
+			<< "</p><p>Ultima osservazione (UTC): <strong>" << html(points.back()->timestamp) << "</strong>. "
+			<< html(points.back()->quality) << ".</p>";
+		const auto now=std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		if (now-points.back()->epoch_seconds>10800) page << "<p class=\"notice\">Dati non recenti: l'ultima osservazione risale a oltre tre ore prima della generazione della pagina.</p>";
+		if (!has_values) { page << "<p>Nessuna misura disponibile per questa serie.</p></section>"; continue; }
+		page << "<figure><img src=\"" << html(options.asset_prefix) << basename << ".svg\" width=\"1000\" height=\"360\" alt=\"Grafico delle temperature di "
 			<< html(label) << "\"><figcaption>" << points.size() << " campioni · " << html(first.timestamp) << " — "
 			<< html(points.back()->timestamp) << " (UTC). I punti rappresentano le singole misure.</figcaption></figure></section>\n";
 	}
 	if (!ordered.empty()) {
-		page << "<section class=\"card\"><h2>Osservazioni</h2><div class=\"scroll\"><table><caption>Prime "
-			<< std::min<std::size_t>(ordered.size(), 200) << " osservazioni, in ordine temporale. L'esportazione CSV è completa.</caption>"
-			<< "<thead><tr><th>Data UTC</th><th>Stazione</th><th>Temperatura °C</th><th>Altezza m</th><th>Descrittore</th><th>File di origine</th></tr></thead><tbody>";
+		page << "<section class=\"card\"><h2>Osservazioni</h2><div class=\"scroll\"><table><caption>Ultime "
+			<< std::min<std::size_t>(ordered.size(), 200) << " osservazioni, dalla più recente. L'esportazione CSV è completa.</caption>"
+			<< "<thead><tr><th>Data UTC</th><th>Stazione</th><th>Temperatura °C</th><th>Altezza m</th><th>Descrittore</th><th>" << (options.operational ? "Qualità" : "File di origine") << "</th></tr></thead><tbody>";
 		for (std::size_t i = 0; i < std::min<std::size_t>(ordered.size(), 200); ++i) {
-			const auto& obs = *ordered[i];
+			const auto& obs = *ordered[ordered.size()-1-i];
 			page << "<tr><td>" << html(obs.timestamp) << "</td><td>" << html(obs.station_id) << "</td><td>"
-				<< number(obs.temperature_c) << "</td><td>" << (obs.sensor_height_m ? number(*obs.sensor_height_m) : "non determinata")
-				<< "</td><td>" << html(obs.variable_code) << "</td><td>" << html(source_name(obs)) << "</td></tr>";
+				<< (obs.temperature_set ? number(obs.temperature_c) : "mancante") << "</td><td>" << (obs.sensor_height_m ? number(*obs.sensor_height_m) : "non determinata")
+				<< "</td><td>" << html(obs.variable_code) << "</td><td>" << html(options.operational ? obs.quality : source_name(obs)) << "</td></tr>";
 		}
 		page << "</tbody></table></div></section>\n";
 	}
-	if (!warnings.empty()) {
+	if (!options.operational && !warnings.empty()) {
 		page << "<section class=\"card notice\"><h2>Diagnostica dell'importazione</h2><p>" << warnings.size()
 			<< " segnalazioni relative ad assunzioni o esclusioni. Le osservazioni non interpretabili non sono incluse nei grafici.</p><details><summary>Mostra le segnalazioni</summary><ul>";
 		for (std::size_t i = 0; i < std::min<std::size_t>(warnings.size(), 100); ++i) page << "<li>" << html(warnings[i]) << "</li>";

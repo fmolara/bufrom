@@ -25,7 +25,25 @@ struct Observation
 	std::string source;
 	std::size_t message_index = 0;
 	std::size_t subset_index = 0;
+	std::string network = "wmo";
+	std::string station_key;
+	std::optional<double> latitude;
+	std::optional<double> longitude;
+	std::optional<double> ground_height_m;
+	bool temperature_set = true;
+	std::optional<double> native_value;
+	std::string native_unit = "K";
+	int native_scale = 1;
+	std::string profile = "wmo-surface-legacy";
+	std::string level_context = "non determinato";
+	std::string time_context = "non determinato";
+	std::string quality = "non interpretata";
+	std::size_t position = 0;
 };
+
+std::vector<Observation> extract_meteohub(
+	const wreport::BufrBulletin&, const std::string&, std::size_t,
+	std::vector<std::string>&);
 
 /**
  * Extract a deliberately limited surface-station profile, not arbitrary BUFR.

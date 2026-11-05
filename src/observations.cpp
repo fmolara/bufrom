@@ -196,6 +196,11 @@ std::optional<Observation> extract_subset(
 	result.epoch_seconds = std::chrono::duration_cast<std::chrono::seconds>(
 		instant.time_since_epoch()).count();
 	result.temperature_c = celsius;
+	result.native_value = temperature.enqd();
+	result.native_unit = temperature.info()->unit;
+	result.native_scale = temperature.info()->scale;
+	result.position = temperature_index;
+	result.station_key = "wmo:" + result.station_id;
 	if (temperature.code() == WR_VAR(0, 12, 4)
 		|| temperature.code() == WR_VAR(0, 12, 104))
 		result.sensor_height_m = 2.0;
@@ -218,6 +223,8 @@ std::vector<Observation> extract_temperatures(
 	std::size_t message_index,
 	std::vector<std::string>& warnings)
 {
+	if (bulletin.data_category == 255)
+		return extract_meteohub(bulletin, source, message_index, warnings);
 	std::vector<Observation> result;
 	if (bulletin.data_category != 0)
 	{

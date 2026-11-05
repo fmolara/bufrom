@@ -3,7 +3,7 @@
 set -eu
 
 task_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-program="$task_root/build/diario-meteo"
+program="$task_root/build/bufrom"
 fixture="$task_root/tests/data/synop3new.bufr"
 gnuplot_program=${GNUPLOT:-gnuplot}
 work=$(mktemp -d)

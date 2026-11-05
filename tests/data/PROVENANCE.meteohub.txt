@@ -1,0 +1,22 @@
+Fixture meteohub-simnbo.bufr: quattro messaggi originali e non modificati
+(indici 0, 1, 96, 97) estratti dal lotto simnbo-20261104.bufr.
+Acquisizione ufficiale e query documentate in VALIDATION-debian.txt.
+SHA256 lotto completo: 968e2acaa3ec18cfb5d316becd9f442f785a44e33b6ac5fae48bca20fd3c602f
+SHA256 fixture: 602ceee62f2cf4e708ac2d73f784a6ea08b7d08132ebd1c73b172bef28a3b80e
+Licenza dati CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Attribuzione: Arpae Emilia-Romagna Idro-Meteo-Clima Service,
+tramite MeteoHub di Agenzia ItaliaMeteo. Nessuna modifica alle osservazioni.
+Metadata/licenza: https://meteohub.agenziaitaliameteo.it/api/datasets?licenceSpecs=true
+Dataset id/rete: simnbo, nome catalogo simnbo-emiliaromagna.
+
+Valori attesi verificati con inspect/export nativi di libwreport 3.36:
+Forlì Urbana, rete simnbo, coordinate 44.22039,12.04182, quota suolo 51 m:
+2026-11-04T00:00:00Z 283.45 K; 2026-11-04T00:15:00Z 283.55 K.
+Bertinoro, rete simnbo, coordinate 44.15206,12.14217, quota suolo 139 m:
+2026-11-04T00:00:00Z 282.75 K; 2026-11-04T00:15:00Z 282.75 K.
+Quattro misure confrontate anche con il JSON ufficiale dello stesso endpoint
+(output_format=JSON, intervallo limitato 00:00..00:15 UTC): corrispondenza
+di nome, rete, coordinate, livello, tempo e valore K. JSON non usato nella pipeline.
+B12101, scale 2 (0.01 K), livello 103,2000, tempo 254,0,0.
+Nessun attributo di qualità presente.
+Questa fixture storica è esclusa dai percorsi dell'acquisizione operativa.

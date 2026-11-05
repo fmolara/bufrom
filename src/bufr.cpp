@@ -49,7 +49,16 @@ InputStats read_bufr(const std::vector<std::filesystem::path>& files,
 		std::size_t message_index = 0;
 		try {
 			for (;;) {
+				char magic[4];
+				const auto got = std::fread(magic, 1, sizeof(magic), input.get());
+				if (got == 0 && std::feof(input.get())) break;
+				if (got != 4 || std::memcmp(magic, "BUFR", 4) != 0)
+					throw std::runtime_error("Byte estranei o intestazione BUFR troncata.");
+				if (std::fseek(input.get(), -4, SEEK_CUR) != 0)
+					throw std::runtime_error("Impossibile riposizionare il file BUFR.");
 				if (!wreport::BufrBulletin::read(input.get(), encoded, filename.c_str(), &offset)) break;
+				if (encoded.size() < 12 || encoded.compare(encoded.size()-4, 4, "7777") != 0)
+					throw std::runtime_error("Terminatore BUFR assente.");
 				if (offset < 0) throw std::runtime_error("Offset BUFR negativo.");
 				auto bulletin = wreport::BufrBulletin::decode(
 					encoded, *options, filename.c_str(), static_cast<std::size_t>(offset));
