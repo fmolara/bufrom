@@ -1,0 +1,69 @@
+BufRom 0.2.0-dev — verifica sviluppo del 5 novembre 2026
+
+Macchina: debian-dev, Debian GNU/Linux 13 (trixie), GCC 14.2.0.
+libwreport-dev e wreport-common: 3.36-1.1+b3 (pkg-config 3.36).
+gnuplot-nox: 6.0.2; SQLite 3.46.1; OpenSSL 3.5.7.
+Le dipendenze di sistema sono state installate da Federico.
+Nessun comando root eseguito dall'agente.
+
+Base originale: diario-meteo-romagna-v0.1.0.zip
+SHA256 5f7fd3d94ff810997ba16393b39b55133c0f4ebc9d79a94b79fa84b26455ea9d
+Commit locale della base invariata: 8454d5c.
+VALIDATION.txt e NOTES-wreport.md mantengono il significato storico della v0.1.0.
+Non sono state fatte attribuzioni nuove di bug upstream alla libreria corrente.
+
+Build: make -j2, riuscita. Test: make check, exit 0.
+- Sette gruppi nativi originali, tutti OK.
+- Decodifica della fixture MeteoHub, identità, UTC, unità, risoluzione, livello, tempo.
+- Reti distinte, NULL, riapertura SQLite, import idempotente e rettifica con revisione.
+- Un vecchio lotto noto non annulla una rettifica successiva.
+- Conflitti fra ripetizioni e acquisizioni discordanti fuori ordine: rollback.
+- CLI originale, roundtrip semantico, CSV, filtro stazioni, staging e gnuplot.
+- Pipeline offline: download fallito e gnuplot fallito conservano HTML e ultimo
+  successo; seconda release, asset precedenti e ripristino verificati.
+- ShellCheck -x e bash -n sui nuovi script: exit 0.
+- systemd-analyze verify sui due esempi con percorsi locali risolti: exit 0;
+  questa è una verifica statica, non un timer in esecuzione.
+I dati sintetici per test della pipeline sono creati soltanto in directory temporanee.
+
+Acquisizione live: endpoint pubblico ufficiale della mappa MeteoHub,
+POST https://meteohub.agenziaitaliameteo.it/api/observations
+Parametri URL (nomi/formato verificati sul frontend ufficiale):
+  q=reftime: >=2026-11-04 00:00,<=2026-11-04 23:59;product:B12101;license:CCBY_COMPLIANT;timerange:254,0,0;level:103,2000,0,0
+  output_format=BUFR networks=simnbo
+  latmin=44.12 latmax=44.28 lonmin=12.00 lonmax=12.40
+Senza autenticazione; HTTP 200, application/octet-stream, 31104 byte.
+SHA256 968e2acaa3ec18cfb5d316becd9f442f785a44e33b6ac5fae48bca20fd3c602f
+Libwreport ha decodificato 192 messaggi, 192 subset, 3456 variabili:
+96 misure a intervalli di 15 minuti per Forlì Urbana e 96 per Bertinoro,
+2026-11-04T00:00:00Z .. 2026-11-04T23:45:00Z.
+B12101, K, scala 2, livello 103,2000 e tempo 254,0,0. Nessun attributo presente.
+Prima importazione: new=192. Reimportazione identica: new=0, duplicate=192.
+Quattro messaggi intatti sono la fixture redistribuita con attribuzione CC BY 4.0.
+I quattro valori e i metadati corrispondono al JSON ufficiale della stessa richiesta
+limitata a 00:00..00:15 UTC; JSON usato soltanto come controllo incrociato.
+
+Il solo wreport-common non contiene B07192; le tabelle ufficiali DB-All.e 7.21-1
+incluse nel progetto hanno consentito la decodifica senza alterare il flusso BUFR.
+Provenienza e checksum in tables/PROVENANCE.txt. Non è una patch a libwreport.
+
+Pipeline live manuale completata in sviluppo il 2026-11-05T15:26:10Z:
+236 osservazioni (118 per stazione), da 2026-11-04T09:30:00Z a
+2026-11-05T14:45:00Z, due SVG XML validi e CSV verificato con 236 righe dati.
+Anteprima locale generata, senza Apache e senza URL pubblico verificato.
+Il grafico è stato anche controllato visivamente in PNG prodotto da gnuplot.
+La pipeline rilegge 30 ore in due richieste giornaliere UTC; il diario mostra 48 ore
+se disponibili. Un tentativo di sviluppo precedente aveva importato i dati ma
+non pubblicato: quello successivo ha ritrovato 236 duplicati senza perdita di dati.
+
+Il repository destinazione https://github.com/fmolara/bufrom è stato verificato
+pubblico con lettura HTTPS senza autenticazione (HTTP 200), inizialmente vuoto.
+Federico ha autorizzato lettura e scrittura. Per il commit corrente consultare git.
+
+Produzione: quixote.molara.net, Apache del sito https://www.molara.net/.
+Percorso e URL HTTPS di BufRom non ancora assegnati.
+Federico deve ancora configurare accesso SSH con chiave dalla macchina di sviluppo;
+l'accesso attuale a password non è stato automatizzato e non sono state chieste
+password nella conversazione. Nessun deploy o comando root sul server eseguito.
+Scheduler non installato né attivato: prima esecuzione pianificata non verificata.
+Non è dichiarata raggiunta la prima versione pubblica operativa.
