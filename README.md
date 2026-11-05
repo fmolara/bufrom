@@ -36,9 +36,23 @@ per eseguire BufRom in produzione.
 Su **Debian 13**, l'amministratore installa le dipendenze di esecuzione come root:
 
 ```sh
-apt install libwreport3t64 wreport-common libsqlite3-0 libssl3t64 libstdc++6 \
-    gnuplot-nox curl jq bash util-linux coreutils findutils ca-certificates tar gzip
+apt install --no-install-recommends \
+    libwreport3t64 wreport-common libsqlite3-0 libssl3t64 libstdc++6 \
+    gnuplot-nox fonts-liberation curl jq bash util-linux coreutils findutils \
+    ca-certificates tar gzip
 ```
+
+**In produzione usare `libwreport3t64`, senza `libwreport-dev`, `libsqlite3-dev`
+o `libssl-dev`.** Il comando nella sezione «Compilazione e test» è destinato
+alla macchina di sviluppo. In particolare, `libwreport-dev` dipende da
+`liblua5.1-0-dev`, che raccomanda Libtool; attraverso ulteriori raccomandazioni
+e dipendenze possono essere installati anche Automake e Autoconf. Questi strumenti
+non servono per eseguire BufRom.
+
+`--no-install-recommends` mantiene le dipendenze obbligatorie ed evita, fra l'altro,
+la catena di programmi raccomandati da gnuplot attraverso `groff`, come Ghostscript
+e ImageMagick, non necessari ai grafici SVG del diario. `fonts-liberation` viene
+installato esplicitamente per rendere disponibili i font.
 
 Le altre librerie necessarie sono risolte da APT. Apache deve essere già
 configurato per servire la directory pubblica scelta; il programma viene
@@ -82,6 +96,9 @@ seguire la procedura operativa; database e raw rimangono nella stessa `STATE_DIR
 Questa procedura non è ancora stata verificata sul server di produzione.
 
 ## Compilazione e test su Debian
+
+Questa sezione è riservata alla **macchina di sviluppo**. Per un server che esegue
+il binario già compilato usare soltanto la procedura di installazione precedente.
 
 Dipendenze da installare come amministratore (non è necessario usare sudo se
 l'amministratore accede direttamente come root):
