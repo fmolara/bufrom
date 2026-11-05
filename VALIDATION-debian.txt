@@ -80,3 +80,11 @@ La prerelease già installata resta invariata: per l'avvio manuale usare prima
 cd /var/lib/wreport. L'unità systemd di esempio ora dichiara WorkingDirectory.
 Scheduler non installato né attivato: prima esecuzione pianificata non verificata.
 Non è dichiarata raggiunta la prima versione pubblica operativa.
+
+Configurazione Apache per /bufrom/ preparata sulla base del VirtualHost HTTPS
+fornito da Federico. WordPress risulta rimosso; le sue direttive residue restano
+fuori dall'intervento. Frammento Alias locale verificato con Apache 2.4.69-1~deb13u1
+estratto da pacchetti Debian ufficiali in un prefisso privato, senza installazioni
+root e con ascolto solo su loopback. Sintassi, HTML/SVG/CSV, redirect slash,
+listing negato e altri VirtualHost preservati. Configtest e verifica HTTPS sul
+server devono ancora essere eseguiti da Federico e verificati dall'esterno.

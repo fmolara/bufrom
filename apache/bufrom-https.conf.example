@@ -1,0 +1,10 @@
+# Include inside the www.molara.net HTTPS VirtualHost only.
+# Serve generated public files; the archive/configuration remain elsewhere.
+Alias "/bufrom" "/var/www/bufrom"
+
+<Directory "/var/www/bufrom">
+    Options -Indexes
+    AllowOverride None
+    DirectoryIndex index.html
+    Require all granted
+</Directory>

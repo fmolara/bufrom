@@ -82,8 +82,8 @@ I percorsi proposti negli esempi sono:
 | `/var/lib/wreport/bufrom` | `STATE_DIR`, proprietà `wreport:wreport`, modo `0700`; database, raw, ricevute e log |
 | `/var/www/bufrom` | `PUBLIC_DIR` dedicata, scrivibile da `wreport` e leggibile da Apache; solo HTML, CSV e grafici |
 
-Il percorso pubblico è una proposta: va confermato confrontandolo con la
-configurazione Apache esistente prima di crearne la directory o il relativo Alias.
+Il percorso pubblico scelto per il collegamento Apache è `/var/www/bufrom`;
+la sua creazione e l’inclusione dell’Alias restano da eseguire.
 L’URL scelto è `https://www.molara.net/bufrom/`, ancora da collegare e verificare. Apache non deve accedere alla directory
 privata e l'utente `wreport` non deve possedere o poter modificare il programma.
 
@@ -126,6 +126,53 @@ Controllare HTTPS dall'esterno: HTML, tutti gli SVG, CSV, date delle misure e
 link GitHub. Un controllo locale non dimostra che Apache serva la nuova release.
 Controllare che il database, i raw e la configurazione non siano sotto il percorso
 pubblico. I log possono includere percorsi locali e restano privati.
+
+## Pubblicazione Apache su quixote
+
+URL scelto: `https://www.molara.net/bufrom/`, output in `/var/www/bufrom`.
+Nel VirtualHost HTTPS fornito da Federico non ci sono regole Rewrite; gli alias
+WordPress sono residui di un pacchetto già rimosso. L'intervento BufRom aggiunge
+soltanto il proprio collegamento, conservando le altre direttive del server.
+
+Il frammento [apache/bufrom-https.conf.example](apache/bufrom-https.conf.example)
+usa un [Alias Apache](https://httpd.apache.org/docs/2.4/mod/mod_alias.html#alias)
+per servire la directory generata, con `index.html`, nessun elenco di directory
+e nessun `.htaccess`. Va incluso **dentro il solo VirtualHost HTTPS** di
+`www.molara.net`, non abilitato globalmente con `a2enconf`.
+La prerelease originaria v0.2.0-dev non contiene ancora il frammento; è disponibile
+nel repository e sarà incluso nei nuovi archivi di esecuzione.
+
+Le seguenti operazioni sono riservate all'amministratore, previa autorizzazione
+di Federico; non sono ancora state eseguite su quixote:
+
+1. Creare `/var/www/bufrom` soltanto se il percorso è libero, con proprietario
+   `wreport:wreport` e modo `0755`. Copiarvi con `cp -a` il contenuto di
+   `/var/lib/wreport/site-preview/.`: sono i soli file statici già generati.
+   Si preservano così release e asset precedenti, necessari al ripristino.
+2. Salvare una copia della configurazione privata sotto `/etc/bufrom`, cambiare
+   `PUBLIC_DIR` in `/var/www/bufrom`, poi eseguire un aggiornamento come `wreport`
+   partendo da `/var/lib/wreport`. Database, raw e ricevute rimangono nella stessa
+   `STATE_DIR`. Verificare che `www-data` possa leggere `index.html`.
+3. Installare il frammento come `/etc/apache2/bufrom-https.conf`, proprietà root,
+   modo `0644`. Risolvere con `readlink -f` il percorso di
+   `/etc/apache2/sites-enabled/wp-molara-net.conf`, farne un backup e aggiungere
+   subito dopo `<VirtualHost *:443>` questa sola riga:
+
+   ```apache
+   Include /etc/apache2/bufrom-https.conf
+   ```
+
+4. Eseguire `apache2ctl configtest`; ricaricare con `systemctl reload apache2`
+   soltanto con esito positivo. Se il test fallisce, ripristinare il backup del
+   VirtualHost; il server in esecuzione continua a usare la configurazione precedente.
+5. Controllare dall'esterno HTML, SVG, CSV, link GitHub, date e redirect
+   `/bufrom` → `/bufrom/`; controllare anche che la pagina iniziale del sito
+   continui a rispondere. Solo questa verifica conferma la pubblicazione HTTPS.
+
+Il frammento è stato provato con Apache 2.4.69 ufficiale Debian, estratto in un
+prefisso privato e avviato senza root su loopback: sintassi, pagina, SVG, CSV,
+redirect della barra finale, divieto di listing e isolamento fra VirtualHost
+verificati. Questo controllo locale non sostituisce il test HTTPS su quixote.
 
 ## Pianificazione
 

@@ -30,7 +30,7 @@ install -d "$package/build" "$package/scripts"
 install -m 755 build/bufrom "$package/build/bufrom"
 strip --strip-unneeded "$package/build/bufrom"
 install -m 755 scripts/update.sh scripts/fetch-meteohub.sh scripts/rollback.sh "$package/scripts/"
-cp -R tables config systemd "$package/"
+cp -R tables config systemd apache "$package/"
 install -m 644 README.md OPERATIONS.md COPYING VALIDATION-debian.txt "$package/"
 {
 	printf 'BufRom %s\nCommit %s\nTarget Debian 13 (%s)\n' "$version" "$commit" "$arch"
