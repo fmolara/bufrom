@@ -6,6 +6,7 @@ umask 077
 [[ $# == 1 ]] || { echo 'Uso: rollback.sh CONFIG' >&2; exit 2; }
 # shellcheck source=../config/bufrom.conf.example
 source "$1"
+cd -- "$STATE_DIR"
 exec 9> "$STATE_DIR/update.lock"
 flock -n 9 || exit 75
 previous=$(jq -r '.previous_release' "$STATE_DIR/last-success.json")

@@ -25,6 +25,8 @@ done
 [[ $public != "$state" && $public != "$state/"* && $state != "$repo" && $state != "$repo/"* ]] || { echo 'Separare repository, archivio e directory pubblica' >&2; exit 2; }
 mkdir -p "$state/raw" "$state/receipts"
 chmod 700 "$state" "$state/raw" "$state/receipts"
+# runuser can inherit /root; GNU find must be able to restore its initial cwd.
+cd -- "$state"
 exec 9> "$state/update.lock"
 flock -n 9 || { echo 'Aggiornamento già in corso' >&2; exit 75; }
 exec >> "$state/update.log" 2>&1

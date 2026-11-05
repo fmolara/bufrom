@@ -8,6 +8,7 @@ Type=oneshot
 # Percorsi proposti per la produzione; installare prima il programma e la configurazione.
 User=wreport
 Group=wreport
+WorkingDirectory=/var/lib/wreport
 UMask=0077
 ExecStart=/opt/bufrom/current/scripts/update.sh /etc/bufrom/bufrom.conf
 TimeoutStartSec=15min

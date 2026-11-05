@@ -1,9 +1,10 @@
 # Gestione di BufRom
 
-Stato attuale: esecuzione live verificata sulla macchina di sviluppo Debian 13;
-server scelto `quixote.molara.net`, sito esistente `https://www.molara.net/`.
-Percorso e URL del diario non ancora assegnati. SSH e predisposizione del server
-restano da completare; nessuna unità systemd è stata installata o attivata.
+Stato attuale: esecuzione live verificata in sviluppo e primo aggiornamento manuale
+riuscito su `quixote.molara.net`, con anteprima privata e 236 osservazioni nuove
+alle 2026-11-05T21:21:36Z (output confermato da Federico).
+URL scelto: `https://www.molara.net/bufrom/`; collegamento ad Apache ancora da
+configurare e verificare. Nessuna unità systemd è stata installata o attivata.
 Non serve lasciare una sessione SSH aperta dopo l'installazione del servizio.
 
 ## Preparare il server
@@ -49,7 +50,10 @@ senza password e con shell `/usr/sbin/nologin`. Il servizio viene avviato dal
 timer systemd di sistema: non occorrono login SSH con questa utenza, privilegi
 amministrativi o lingering. Federico ha confermato su quixote la creazione
 dell’utenza, home e shell previste, e le directory private `wreport:wreport` con
-permessi `0700`. Installazione del programma e avvio del servizio restano da verificare.
+permessi `0700`. Il binario della prerelease v0.2.0-dev è stato installato sotto
+`/opt/bufrom/current`, avviato come `wreport` e verificato con `ldd`. Il primo
+aggiornamento completo ha generato l’anteprima in `/var/lib/wreport/site-preview`.
+L’avvio del servizio tramite scheduler resta da verificare.
 
 Per creare l'utenza e le directory private, l'amministratore esegue questi comandi
 come root su quixote, dopo aver verificato che il nome non sia già utilizzato
@@ -80,18 +84,24 @@ I percorsi proposti negli esempi sono:
 
 Il percorso pubblico è una proposta: va confermato confrontandolo con la
 configurazione Apache esistente prima di crearne la directory o il relativo Alias.
-L'URL HTTPS del diario resta da assegnare. Apache non deve accedere alla directory
+L’URL scelto è `https://www.molara.net/bufrom/`, ancora da collegare e verificare. Apache non deve accedere alla directory
 privata e l'utente `wreport` non deve possedere o poter modificare il programma.
 
 Dopo l'installazione del pacchetto binario e della configurazione, per il primo
 aggiornamento manuale l'amministratore può usare, sempre dalla sessione root:
 
 ```sh
+cd /var/lib/wreport
 runuser -u wreport -- /opt/bufrom/current/scripts/update.sh /etc/bufrom/bufrom.conf
 ```
 
 Il comando esegue la pipeline come `wreport` anche con la shell `nologin`; non
-richiede sudo. L'unità di esempio è predisposta con `User=wreport` e `Group=wreport`.
+richiede sudo. Il `cd` evita di ereditare `/root`, che `wreport` non può
+attraversare: nella prima esecuzione questo provocava un avviso di GNU find,
+senza impedire l’aggiornamento. Lo script nel ramo main ora imposta direttamente
+la directory di lavoro privata; la prerelease v0.2.0-dev già installata richiede
+ancora il `cd` nel comando manuale. L’unità di esempio è predisposta con
+`User=wreport`, `Group=wreport` e `WorkingDirectory=/var/lib/wreport`.
 
 ## Aggiornamento e controlli
 

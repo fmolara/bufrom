@@ -4,8 +4,9 @@ BufRom è un piccolo programma **C++20 collegato direttamente a libwreport**.
 Acquisisce temperature in BUFR da MeteoHub, le archivia in SQLite e genera
 HTML, CSV e grafici SVG con gnuplot. Apache serve soltanto i file statici.
 
-**Stato: 0.2.0-dev, verificata su Debian 13 in sviluppo.** Un aggiornamento live
-ha prodotto serie reali di due stazioni della Romagna. La pubblicazione HTTPS
+**Stato: 0.2.0-dev, verificata su Debian 13.** Aggiornamenti live hanno prodotto
+serie reali di due stazioni della Romagna in sviluppo e nell’anteprima privata
+su quixote. La pubblicazione HTTPS
 su quixote.molara.net e l'attivazione/verifica dello scheduler in produzione
 sono ancora da completare: non esiste ancora un URL del diario verificato.
 Il repository è <https://github.com/fmolara/bufrom>.

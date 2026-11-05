@@ -29,7 +29,28 @@ STATIONS=('simnbo:44.22039,12.04182' 'simnbo:44.15206,12.14217')
 LAT_MIN=44.12 LAT_MAX=44.28 LON_MIN=12.00 LON_MAX=12.40
 OVERLAP_HOURS=1 DISPLAY_HOURS=48 GNUPLOT=gnuplot
 CONF
-"$repo/scripts/update.sh" "$work/config"
+# Model runuser inheriting a directory that the service user cannot search.
+from_inaccessible_cwd() {
+	python3 - "$work" "$@" <<'PY'
+import os, subprocess, sys
+from pathlib import Path
+work=Path(sys.argv[1])
+cwd=work/'inaccessible'
+cwd.mkdir(exist_ok=True)
+original=Path.cwd()
+try:
+ os.chdir(cwd)
+ cwd.chmod(0)
+ result=subprocess.run(sys.argv[2:],env={**os.environ,'LC_ALL':'C'})
+finally:
+ cwd.chmod(0o700)
+ os.chdir(original)
+log=work/'state/update.log'
+assert 'Failed to restore initial working directory' not in log.read_text()
+sys.exit(result.returncode)
+PY
+}
+from_inaccessible_cwd "$repo/scripts/update.sh" "$work/config"
 first=$(sha256sum "$work/public/index.html")
 first_release=$(jq -r '.release' "$work/state/last-success.json")
 cp "$work/state/last-success.json" "$work/initial-success.json"
@@ -48,7 +69,7 @@ printf '\nGNUPLOT=gnuplot\n' >> "$work/config"
 "$repo/scripts/update.sh" "$work/config"
 [[ $(jq -r '.previous_release' "$work/state/last-success.json") == "$first_release" ]]
 [[ -s $work/public/releases/$first_release/temperature-1.svg ]]
-"$repo/scripts/rollback.sh" "$work/config"
+from_inaccessible_cwd "$repo/scripts/rollback.sh" "$work/config"
 [[ $(sha256sum "$work/public/index.html") == "$first" ]]
 # Every published local asset is versioned and exists, even after rollback.
 python3 - "$work/public" <<'PY'

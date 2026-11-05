@@ -61,9 +61,22 @@ pubblico con lettura HTTPS senza autenticazione (HTTP 200), inizialmente vuoto.
 Federico ha autorizzato lettura e scrittura. Per il commit corrente consultare git.
 
 Produzione: quixote.molara.net, Apache del sito https://www.molara.net/.
-Percorso e URL HTTPS di BufRom non ancora assegnati.
+URL HTTPS scelto: https://www.molara.net/bufrom/, da collegare ad Apache e verificare.
 Federico deve ancora configurare accesso SSH con chiave dalla macchina di sviluppo;
 l'accesso attuale a password non è stato automatizzato e non sono state chieste
-password nella conversazione. Nessun deploy o comando root sul server eseguito.
+password nella conversazione. Nessun comando root sul server eseguito dall'agente.
+Federico ha installato il pacchetto binario della prerelease v0.2.0-dev (commit
+40825bc), verificato il checksum e avviato il programma come wreport con tutte
+le librerie risolte. Utenza wreport e directory private 0700 confermate.
+Primo aggiornamento manuale sul server confermato dall'output fornito da Federico:
+2026-11-05T21:21:36Z, stage=success, exit_status=0, new=236, updated=0,
+duplicate=0, excluded=0. Release statica privata: 20261105T212136Z-54360,
+in /var/lib/wreport/site-preview. Nessuna verifica HTTPS ancora effettuata.
+L'avviso GNU find sulla directory /root ereditata non ha impedito l'aggiornamento.
+Riprodotto senza root con una directory corrente non attraversabile; gli script
+nel ramo main ora si spostano nella directory privata prima delle operazioni.
+Un test di regressione offline verifica update e rollback con cwd inaccessibile.
+La prerelease già installata resta invariata: per l'avvio manuale usare prima
+cd /var/lib/wreport. L'unità systemd di esempio ora dichiara WorkingDirectory.
 Scheduler non installato né attivato: prima esecuzione pianificata non verificata.
 Non è dichiarata raggiunta la prima versione pubblica operativa.
