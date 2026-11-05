@@ -1,21 +1,23 @@
 # BufRom — Diario meteo della Romagna
 
+[English](README.md) | **Italiano**
+
 BufRom è un piccolo programma **C++20 collegato direttamente a libwreport**.
 Acquisisce temperature in BUFR da MeteoHub, le archivia in SQLite e genera
 HTML, CSV e grafici SVG con gnuplot. Apache serve soltanto i file statici.
 
 **Sito pubblico: [BufRom — Diario meteo della Romagna](https://www.molara.net/bufrom/).**
 Versione 0.2.0-dev, verificata su Debian 13: acquisizione BUFR, archivio e
-pubblicazione manuale su quixote sono funzionanti. Pagina HTTPS, SVG, CSV e
-release precedente sono stati verificati dall’esterno. Reimportazione idempotente e prova di download fallito con pubblicazione
-conservata sono confermate anche sul server. Il timer systemd è attivo: un primo aggiornamento automatico è riuscito
-con prova accelerata; la frequenza ordinaria è oraria. I cicli orari successivi
-restano da osservare.
+pubblicazione su quixote sono funzionanti. Pagina HTTPS, SVG, CSV e release
+precedente sono stati verificati dall’esterno. Reimportazione idempotente e
+prova di download fallito con pubblicazione conservata sono confermate anche
+sul server. Il timer systemd è attivo: un primo aggiornamento automatico è
+riuscito con prova accelerata; la frequenza ordinaria è oraria. I cicli orari
+successivi restano da osservare.
 Il repository è <https://github.com/fmolara/bufrom>.
 
-Verifica in corso: il VirtualHost HTTPS del dominio è risultato disabilitato dopo
-la prima pubblicazione. È preparata una configurazione indipendente da WordPress
-per ripristinare HTTPS; il ripristino sul server resta da eseguire.
+Il VirtualHost HTTPS del dominio è configurato indipendentemente da WordPress;
+il ripristino è stato verificato dall’esterno anche sulla release generata dal timer.
 
 ## Compilazione e test su Debian
 
@@ -63,7 +65,8 @@ un binario adatto sulla macchina di sviluppo.
 
 Per Debian 13 amd64 è disponibile il pacchetto binario di sviluppo nella
 [prerelease v0.2.0-dev](https://github.com/fmolara/bufrom/releases/tag/v0.2.0-dev).
-Esecuzione manuale e primo avvio automatico accelerato sono verificati in produzione. Scaricare:
+Esecuzione manuale e primo avvio automatico accelerato sono verificati in
+produzione. Scaricare:
 
 - `bufrom-0.2.0-dev-debian13-amd64.tar.gz`: programma, tabelle, script ed esempi;
 - `bufrom-0.2.0-dev-source.tar.gz`: sorgenti corrispondenti, con le rispettive licenze;
@@ -318,9 +321,8 @@ quella dei dati.
 
 Binario, aggiornamento completo e Apache/HTTPS sono verificati in produzione.
 Reimportazione e conservazione del sito dopo un download fallito sono verificate
-anche sul server. Il primo avvio automatico accelerato è verificato; i successivi turni orari
-restano da osservare. Il programma conserva in
-memoria piccoli lotti, non interpreta BUFR arbitrari e non garantisce repliche
+anche sul server. Il primo avvio automatico accelerato è verificato; i successivi
+turni orari restano da osservare. Il programma conserva in memoria piccoli lotti, non interpreta BUFR arbitrari e non garantisce repliche
 complete della fonte. Altre variabili, reti, autenticazione MeteoHub e nuovi
 profili sono sviluppi futuri. Non sono inclusi CREX, scrittura di nuovi bollettini,
 binding Python, pacchetto Debian, interfaccia amministrativa o Raspberry.

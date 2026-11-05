@@ -134,3 +134,13 @@ presente. Preparato apache/molara-net.conf.example indipendente da WordPress,
 verificato localmente con Apache 2.4.69 e certificato di test effimero:
 TLS con verifica del nome/certificato, pagina iniziale, /bufrom/ e redirect OK.
 Ripristino del VirtualHost e verifica HTTPS successiva ancora da completare.
+
+Ripristino HTTPS completato: Federico ha installato molara-net.conf, eseguito
+a2ensite e ottenuto Syntax OK. apache2ctl -S mostra www.molara.net su *:443.
+Verifica esterna successiva riuscita senza autenticazione né disattivazione dei
+controlli TLS: HTML della release 20261105T215033Z-55077, aggiornamento
+2026-11-05T21:50:33Z, due SVG XML validi e CSV con 238 osservazioni, 119 per stazione,
+2026-11-04T15:30:00Z .. 2026-11-05T21:00:00Z. Redirect HTTP e barra finale OK.
+Release precedente 20261105T213605Z-54648 ancora raggiungibile; pagina iniziale
+identica alla copia acquisita prima delle modifiche. Primo avvio automatico
+accelerato verificato; i successivi turni orari non sono ancora stati osservati.

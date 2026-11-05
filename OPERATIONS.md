@@ -14,8 +14,9 @@ Timer di sistema installato e prima esecuzione automatica accelerata riuscita
 alle 2026-11-05T21:50:33Z: Result=success, ExecMainStatus=0. Override di prova
 rimosso; calendario orario attivo, prossimo turno mostrato alle 23:03 CET
 (22:03 UTC). I successivi turni orari restano da osservare.
-Nella verifica successiva il VirtualHost HTTPS del dominio è risultato disabilitato;
-il ripristino è in preparazione con la configurazione indipendente descritta sotto.
+Il VirtualHost HTTPS è ora configurato con `molara-net.conf`, indipendente
+da WordPress. Il ripristino è stato verificato dall’esterno sulla release generata
+dal timer: pagina, due SVG, CSV e redirect corretti; pagina iniziale invariata.
 Non serve lasciare una sessione SSH aperta dopo l'installazione del servizio.
 
 ## Preparare il server
@@ -46,7 +47,7 @@ Scegliere separatamente:
 - URL HTTPS reale corrispondente, da verificare dopo il primo aggiornamento.
 
 Per un server di sola produzione seguire la sezione
-[Installazione senza compilazione](README.md#installazione-in-produzione-su-debian-senza-compilazione):
+[Installazione senza compilazione](README.it.md#installazione-in-produzione-su-debian-senza-compilazione):
 installare un archivio binario compatibile, verificare le librerie con `ldd` e
 copiare/adattare la configurazione di esempio. Build e test vengono eseguiti sulla
 macchina di sviluppo; sul server si verifica il primo aggiornamento completo.
@@ -213,8 +214,11 @@ in `sites-available` e il sito predefinito non vengono modificati.
 Il nuovo VirtualHost è stato verificato con Apache locale senza root, usando
 un certificato effimero di test: handshake TLS con verifica del certificato e
 del nome, pagina iniziale, `/bufrom/` e redirect HTTP corretti. I certificati reali
-restano sul server. Ripristino e successiva verifica HTTPS pubblica sono ancora
-in attesa dell’esecuzione dei comandi da parte di Federico.
+restano sul server. Federico ha installato e abilitato `molara-net.conf`;
+`configtest` è riuscito e il VirtualHost risulta caricato sulla porta 443.
+L’agente ha poi verificato dall’esterno handshake HTTPS, pagina iniziale,
+`/bufrom/`, due SVG, CSV, redirect e accesso alla release precedente.
+La pagina iniziale ha lo stesso contenuto acquisito prima delle modifiche.
 
 ## Pianificazione
 
