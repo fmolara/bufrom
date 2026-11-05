@@ -10,6 +10,77 @@ su quixote.molara.net e l'attivazione/verifica dello scheduler in produzione
 sono ancora da completare: non esiste ancora un URL del diario verificato.
 Il repository è <https://github.com/fmolara/bufrom>.
 
+## Installazione in produzione su Debian, senza compilazione
+
+Sul server è sufficiente installare un eseguibile già compilato e le dipendenze
+di esecuzione. Il binario deve essere preparato per la stessa architettura e una
+versione Debian compatibile con il server: quello verificato in sviluppo è per
+**Debian 13 (trixie), amd64**. Per Debian 12 o altre architetture occorre preparare
+un binario adatto sulla macchina di sviluppo.
+
+Attualmente non sono pubblicati un pacchetto `.deb` o un archivio binario nelle
+Release GitHub. Gli archivi dei sorgenti non contengono l'eseguibile. Un archivio
+di esecuzione si può preparare sulla macchina di sviluppo, dopo build e test,
+includendo soltanto questi file del progetto già compilato:
+
+```sh
+tar -czf ../bufrom-runtime-debian13-amd64.tar.gz \
+    build/bufrom tables scripts config systemd README.md OPERATIONS.md COPYING
+```
+
+Accompagnare l'archivio con il suo checksum SHA-256 e i sorgenti corrispondenti
+allo stesso commit, con le rispettive licenze. Trasferire questi file sul server.
+Non occorrono compilatore, `make`, `pkg-config`, pacchetti `-dev`, Python o Git
+per eseguire BufRom in produzione.
+
+Su **Debian 13**, l'amministratore installa le dipendenze di esecuzione come root:
+
+```sh
+apt install libwreport3t64 wreport-common libsqlite3-0 libssl3t64 libstdc++6 \
+    gnuplot-nox curl jq bash util-linux coreutils findutils ca-certificates tar gzip
+```
+
+Le altre librerie necessarie sono risolte da APT. Apache deve essere già
+configurato per servire la directory pubblica scelta; il programma viene
+eseguito separatamente dal server web. `sqlite3` è facoltativo per manutenzione
+e backup da riga di comando.
+
+Come utente del servizio, verificare il checksum ricevuto e installare l'archivio
+in una directory nuova, esterna alla document root. Per esempio:
+
+```sh
+BUFROM_DIR="$HOME/.local/opt/bufrom-0.2.0-dev"
+mkdir -p "$HOME/.local/opt"
+mkdir "$BUFROM_DIR"
+tar -xzf /percorso/bufrom-runtime-debian13-amd64.tar.gz -C "$BUFROM_DIR"
+"$BUFROM_DIR/build/bufrom" --version
+ldd "$BUFROM_DIR/build/bufrom"
+install -d -m 700 "$HOME/.config/bufrom"
+install -m 600 "$BUFROM_DIR/config/bufrom.conf.example" \
+    "$HOME/.config/bufrom/bufrom.conf"
+```
+
+`ldd` deve risolvere tutte le librerie, senza righe `not found`. Conservare la
+struttura dell'archivio: `build/bufrom` individua le tabelle in `../tables`
+rispetto alla propria directory, e gli script richiamano altri file del pacchetto.
+Adattare la configurazione privata impostando `PROGRAM` al percorso assoluto di
+`build/bufrom`, `STATE_DIR` a una directory privata esterna al pacchetto e alla
+document root, e `PUBLIC_DIR` alla directory dedicata servita da Apache.
+Gli esempi contengono percorsi della macchina di sviluppo da sostituire.
+
+Dopo la configurazione, effettuare il primo aggiornamento come utente del servizio:
+
+```sh
+"$BUFROM_DIR/scripts/update.sh" "$HOME/.config/bufrom/bufrom.conf"
+```
+
+Verificare quindi la pagina attraverso il suo URL HTTPS. Per attivare il timer,
+consultare [OPERATIONS.md](OPERATIONS.md#pianificazione), adattando utente, percorsi
+e configurazione dell'unità al pacchetto installato. Per gli aggiornamenti
+successivi installare un nuovo archivio compatibile in una nuova directory e
+seguire la procedura operativa; database e raw rimangono nella stessa `STATE_DIR`.
+Questa procedura non è ancora stata verificata sul server di produzione.
+
 ## Compilazione e test su Debian
 
 Dipendenze da installare come amministratore (non è necessario usare sudo se

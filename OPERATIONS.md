@@ -13,8 +13,9 @@ Come utente del servizio, raccogliere prima queste informazioni senza privilegi:
 ```sh
 hostname
 cat /etc/os-release
-command -v g++ make pkg-config gnuplot curl jq flock timeout
-pkg-config --modversion libwreport sqlite3 openssl
+command -v gnuplot curl jq flock timeout
+dpkg --print-architecture
+dpkg-query -W libwreport3t64 wreport-common libsqlite3-0 libssl3t64 libstdc++6
 ls -ld /var/www /srv/www
 ```
 
@@ -27,12 +28,16 @@ l'autorizzazione di Federico.
 
 Scegliere separatamente:
 
-- checkout del programma, con `build/bufrom` e `tables/`;
+- directory del programma installato, con `build/bufrom` e `tables/`;
 - configurazione `0600` e `STATE_DIR` privata `0700`, fuori dalla document root;
 - `PUBLIC_DIR` dedicata, leggibile da Apache (`0755` anche lungo il percorso);
 - URL HTTPS reale corrispondente, da verificare dopo il primo aggiornamento.
 
-Compilare e provare sul server, poi copiare/adattare la configurazione di esempio.
+Per un server di sola produzione seguire la sezione
+[Installazione senza compilazione](README.md#installazione-in-produzione-su-debian-senza-compilazione):
+installare un archivio binario compatibile, verificare le librerie con `ldd` e
+copiare/adattare la configurazione di esempio. Build e test vengono eseguiti sulla
+macchina di sviluppo; sul server si verifica il primo aggiornamento completo.
 Non copiare il database di test o fixture sintetiche nello stato operativo.
 Per questa fonte pubblica non ci sono credenziali. Eventuali futuri segreti
 restano in file privati, mai in argomenti, repository o log.
@@ -104,7 +109,11 @@ un cambio release. Le copie HTML nelle release usano URL relativi alla radice.
 Per backup coerenti usare SQLite `.backup` e copiare **anche** raw e ricevute;
 conservare la configurazione privata separatamente. Non copiare soltanto il file
 SQLite mentre è in scrittura. Prima di aggiornare il programma fermare il timer,
-attendere il termine dell'eventuale servizio, fare il backup, aggiornare il checkout,
-compilare e fare `make check`. Eseguire un aggiornamento completo e riattivare il
-timer soltanto dopo averlo verificato. Lo schema attuale è versione 1; non ci sono
+attendere il termine dell'eventuale servizio e fare il backup. In produzione
+installare il nuovo archivio binario in una directory distinta e aggiornare
+`PROGRAM` nella configurazione e `ExecStart` nell'unità systemd; fare rileggere
+le unità con `systemctl daemon-reload` come root. Chi usa invece un checkout
+di sviluppo aggiorna i sorgenti, compila e fa `make check`.
+Eseguire un aggiornamento completo e riattivare il timer soltanto dopo averlo
+verificato. Lo schema attuale è versione 1; non ci sono
 migrazioni o cancellazioni automatiche dello storico.
