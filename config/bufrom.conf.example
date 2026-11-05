@@ -1,7 +1,9 @@
-# File Bash fidato. Copiare FUORI dal repository e dalla document root, chmod 600.
-PROGRAM=/mnt/bufrom/bufrom/build/bufrom
-STATE_DIR=/home/federico/.local/state/bufrom
-PUBLIC_DIR=/home/federico/public/bufrom
+# File Bash fidato. Conservare FUORI dal repository e dalla document root.
+# Permessi: 0600 se appartiene all'utente del servizio, oppure root:wreport 0640.
+# Percorsi proposti per l'utente di servizio wreport; adattare PUBLIC_DIR ad Apache.
+PROGRAM=/opt/bufrom/current/build/bufrom
+STATE_DIR=/var/lib/wreport/bufrom
+PUBLIC_DIR=/var/www/bufrom
 REPOSITORY_URL=https://github.com/fmolara/bufrom
 NETWORK=simnbo
 STATIONS=('simnbo:44.22039,12.04182' 'simnbo:44.15206,12.14217')

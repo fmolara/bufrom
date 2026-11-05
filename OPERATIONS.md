@@ -42,6 +42,55 @@ Non copiare il database di test o fixture sintetiche nello stato operativo.
 Per questa fonte pubblica non ci sono credenziali. Eventuali futuri segreti
 restano in file privati, mai in argomenti, repository o log.
 
+## Utente di servizio wreport
+
+Per quixote si prevede un utente di sistema `wreport`, con gruppo omonimo,
+senza password e con shell `/usr/sbin/nologin`. Il servizio viene avviato dal
+timer systemd di sistema: non occorrono login SSH con questa utenza, privilegi
+amministrativi o lingering. La creazione sul server non è ancora stata verificata.
+
+Per creare l'utenza e le directory private, l'amministratore esegue questi comandi
+come root su quixote, dopo aver verificato che il nome non sia già utilizzato
+(`getent passwd wreport` e `getent group wreport`):
+
+```sh
+adduser --system --group --home /var/lib/wreport \
+    --shell /usr/sbin/nologin wreport
+install -d -o wreport -g wreport -m 0700 \
+    /var/lib/wreport /var/lib/wreport/bufrom
+id wreport
+```
+
+Se l'utenza esiste già, esaminarne configurazione e utilizzo prima di riutilizzarla;
+questi comandi sono per la prima creazione. Nell'ambiente di questa sessione
+l'accesso SSH a quixote non è ancora configurato: i comandi vanno eseguiti nella
+sessione root di Federico, oppure dopo aver predisposto l'accesso e autorizzato
+l'esecuzione come root.
+
+I percorsi proposti negli esempi sono:
+
+| Percorso | Uso e permessi |
+| --- | --- |
+| `/opt/bufrom/current` | Collegamento alla versione binaria installata; programma e tabelle gestiti da root, leggibili ed eseguibili da `wreport` |
+| `/etc/bufrom/bufrom.conf` | Configurazione `root:wreport`, modo `0640`, dentro una directory `root:wreport` con modo `0750` |
+| `/var/lib/wreport/bufrom` | `STATE_DIR`, proprietà `wreport:wreport`, modo `0700`; database, raw, ricevute e log |
+| `/var/www/bufrom` | `PUBLIC_DIR` dedicata, scrivibile da `wreport` e leggibile da Apache; solo HTML, CSV e grafici |
+
+Il percorso pubblico è una proposta: va confermato confrontandolo con la
+configurazione Apache esistente prima di crearne la directory o il relativo Alias.
+L'URL HTTPS del diario resta da assegnare. Apache non deve accedere alla directory
+privata e l'utente `wreport` non deve possedere o poter modificare il programma.
+
+Dopo l'installazione del pacchetto binario e della configurazione, per il primo
+aggiornamento manuale l'amministratore può usare, sempre dalla sessione root:
+
+```sh
+runuser -u wreport -- /opt/bufrom/current/scripts/update.sh /etc/bufrom/bufrom.conf
+```
+
+Il comando esegue la pipeline come `wreport` anche con la shell `nologin`; non
+richiede sudo. L'unità di esempio è predisposta con `User=wreport` e `Group=wreport`.
+
 ## Aggiornamento e controlli
 
 ```sh

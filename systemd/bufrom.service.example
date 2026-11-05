@@ -5,10 +5,11 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-# Adattare utente e percorsi alla produzione prima dell'installazione.
-User=federico
+# Percorsi proposti per la produzione; installare prima il programma e la configurazione.
+User=wreport
+Group=wreport
 UMask=0077
-ExecStart=/percorso/bufrom/scripts/update.sh /percorso/privato/bufrom.conf
+ExecStart=/opt/bufrom/current/scripts/update.sh /etc/bufrom/bufrom.conf
 TimeoutStartSec=15min
 NoNewPrivileges=true
 PrivateTmp=true

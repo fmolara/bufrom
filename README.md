@@ -116,7 +116,8 @@ rispetto alla propria directory, e gli script richiamano altri file del pacchett
 Adattare la configurazione privata impostando `PROGRAM` al percorso assoluto di
 `build/bufrom`, `STATE_DIR` a una directory privata esterna al pacchetto e alla
 document root, e `PUBLIC_DIR` alla directory dedicata servita da Apache.
-Gli esempi contengono percorsi della macchina di sviluppo da sostituire.
+Gli esempi propongono i percorsi dell'utenza di servizio `wreport`; adattarli
+se si sceglie un'altra disposizione o un'installazione nella home dell'utente.
 
 Dopo la configurazione, effettuare il primo aggiornamento come utente del servizio:
 
@@ -130,6 +131,9 @@ e configurazione dell'unità al pacchetto installato. Per gli aggiornamenti
 successivi installare un nuovo archivio compatibile in una nuova directory e
 seguire la procedura operativa; database e raw rimangono nella stessa `STATE_DIR`.
 Questa procedura non è ancora stata verificata sul server di produzione.
+Per il server quixote è prevista l'utenza di servizio dedicata `wreport`:
+[creazione, percorsi e permessi](OPERATIONS.md#utente-di-servizio-wreport).
+Gli esempi di configurazione e unità systemd sono predisposti per questa utenza.
 
 ## Dal BUFR al diario
 
